@@ -1,6 +1,6 @@
 # Battery Lifetime Prediction - Complete Results Report
 
-**Generated:** 2026-02-01 14:19:46
+**Generated:** 2026-02-16 05:28:32
 
 ---
 
@@ -21,17 +21,17 @@
 | Mode | TTE (hours) |
 |------|-------------|
 | Idle | 24.00 |
-| Light | 13.51 |
-| Busy | 5.40 |
+| Light | 13.53 |
+| Busy | 5.41 |
 | Video | 7.21 |
 | Gaming | 2.25 |
 | Navigation | 4.32 |
 
 ### Monte Carlo
 
-- **Mean:** 10.49 hours
-- **Std Dev:** 0.41 hours
-- **90% CI:** [9.75, 11.15] hours
+- **Mean:** 5.52 hours
+- **Std Dev:** 0.33 hours
+- **90% CI:** [4.96, 6.08] hours
 
 ### Aging Impact (500 Cycles)
 
@@ -45,32 +45,34 @@
 | Mode | Fresh TTE | Aged TTE | Loss (%) |
 |------|-----------|----------|----------|
 | Idle | 24.00h | 24.00h | 0.0% |
-| Light | 13.51h | 13.52h | -0.0% |
-| Gaming | 2.25h | 2.25h | 0.3% |
-| MC Average | 10.49h | 10.47h | 0.2% |
+| Light | 13.53h | 13.52h | 0.0% |
+| Gaming | 2.25h | 2.25h | 0.2% |
+| MC Average | 5.52h | 5.59h | -1.2% |
 
 ## 3. Sensitivity Analysis
 
 | Parameter | Local Sensitivity | Morris μ* |
 |-----------|-------------------|----------|
-| Q_n0 | 0.8731 | 23081.2500 |
-| R0_ref | -0.1028 | 75.0000 |
-| T_amb | -0.2567 | 82.5000 |
-| P_avg | 0.0000 | 16548.7500 |
+| Q_n0 | 0.9245 | 26651.2500 |
+| R0_ref | -0.1026 | 127.5000 |
+| T_amb | 0.3088 | 71.2500 |
+| P_avg | 0.0514 | 32981.2500 |
 
 ## 4. Output Files
 
-- `AGING_ANALYSIS_SUMMARY.md`
-- `fig_aging_impact.png`
-- `fig_hmm_trajectory.png`
-- `fig_ocv_soc_curve.png`
-- `fig_sensitivity_analysis.png`
+- `workflow_log_20260201_141627.txt`
+- `framework_diagram.png`
+- `param_identification_results.txt`
 - `fig_tte_by_mode.png`
 - `fig_tte_degradation_pct.png`
-- `fig_tte_distribution.png`
-- `identified_parameters.npz`
-- `key_results.csv`
 - `PAPER_RESULTS_REPORT.md`
-- `param_identification_results.txt`
 - `validation_results.csv`
-- `workflow_log_20260201_141627.txt`
+- `fig_ocv_soc_curve.png`
+- `fig_aging_impact.png`
+- `fig_tte_distribution.png`
+- `key_results.csv`
+- `algorithm_flowchart.png`
+- `fig_sensitivity_analysis.png`
+- `fig_hmm_trajectory.png`
+- `identified_parameters.npz`
+- `AGING_ANALYSIS_SUMMARY.md`
