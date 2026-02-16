@@ -78,5 +78,4 @@ python code/run_complete_workflow.py
 6.  **灵敏度分析**: 分析各参数对 TTE 的影响权重。
 7.  **报告生成**: 在 `code/paper_results/` 目录下生成图表和汇总报告。
 
----
-**Team Control Number:** 2612876
+注意：由于Github限制，我们删除了部分超过100MB的数据
