@@ -1,0 +1,19 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Background}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Problem Restatement}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Literature Review}{2}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Our Work}{2}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Model Assumptions and Notations}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Model Assumptions}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Notations}{2}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Data Pre-processing}{2}{section.3}%
+\contentsline {section}{\numberline {4}Model Development}{2}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Model for Problem 1:}{2}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Model for Problem 2:}{2}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Model for Problem 3:}{2}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Model for Problem 4:}{2}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Sensitivity Analysis}{2}{section.5}%
+\contentsline {section}{\numberline {6}Model Extension}{2}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{2}{section.7}%
+\setcounter {tocdepth}{0}
+\contentsline {section}{\numberline {A}Report on Use of AI}{3}{appendix.A}%

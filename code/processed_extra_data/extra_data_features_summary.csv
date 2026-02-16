@@ -1,0 +1,2 @@
+discharge_capacity,charge_capacity,coulombic_efficiency,avg_voltage,voltage_std,voltage_range,min_voltage,max_voltage,avg_resistance,min_resistance,max_resistance,resistance_std,max_temperature,min_temperature,avg_temperature,temperature_std,Source_File,Source_Sheet
+3.121701853493533e-05,,,3.4097025009678252,0.30793068773655785,1.776662973212908,2.470048280303351,4.246711253516259,,,,,12.37681588069689,4.932690617348016,8.40547813580836,1.5493056446151088,nasa_data1.xlsx,放电曲线样本

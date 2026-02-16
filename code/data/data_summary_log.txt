@@ -1,0 +1,187 @@
+
+========================================
+File: Experimental_data_aged_cell.csv
+========================================
+First 5 lines (raw):
+Time,Current,Voltage,Temperature
+0,2.3607283,2.9993114,27.449894
+1.00000762939453,2.3030361,2.9998126,27.724861
+2.00000762939453,2.2843708,2.9998627,27.545357
+3.00000762939453,2.2215884,2.9998627,27.457523
+
+
+Pandas parse (header=0):
+Columns: ['Time', 'Current', 'Voltage', 'Temperature']
+Dtypes:
+Time           float64
+Current        float64
+Voltage        float64
+Temperature    float64
+dtype: object
+
+========================================
+File: Experimental_data_fresh_cell.csv
+========================================
+First 5 lines (raw):
+Time,Current,Voltage,Temperature
+0,2.1587039,2.9996068,26.384377
+1,2.2876738,2.9994066,26.227879
+2,2.2282798,2.9997571,26.449251
+2.99999237060547,2.2248857,2.9998572,26.277494
+
+
+Pandas parse (header=0):
+Columns: ['Time', 'Current', 'Voltage', 'Temperature']
+Dtypes:
+Time           float64
+Current        float64
+Voltage        float64
+Temperature    float64
+dtype: object
+
+========================================
+File: OCV_vs_SOC_curve.csv
+========================================
+First 5 lines (raw):
+SOC,V0
+0,3.01047005
+0.001,3.03191050588679
+0.002,3.04957099832699
+0.003,3.06590023448654
+
+
+Pandas parse (header=0):
+Columns: ['SOC', 'V0']
+Dtypes:
+SOC    float64
+V0     float64
+dtype: object
+
+========================================
+File: PLN_Number_SOC_Temp_StoragePeriod.xlsx
+========================================
+
+Sheet: Sheet1
+Columns: ['PLN', 'SOC', 'TEMP', 'Time', 'Discharge Capacity', 'Unnamed: 5']
+First row values: [1, nan, nan, nan, 1.421629954568715, 'bad']
+
+Sheet: Sheet2
+Columns: []
+First row values: Empty
+
+Sheet: Sheet3
+Columns: []
+First row values: Empty
+
+
+--- PLN Series Files (17 files found) ---
+Inspecting a sample to verify consistency.
+
+========================================
+File: 10_21_2014_PLN_1to6.xls
+========================================
+Columns: ['Unnamed: 0', 'Unnamed: 1', 'Unnamed: 2', 'TEST REPORT', 'Unnamed: 4', 'Unnamed: 5', 'Unnamed: 6', 'Unnamed: 7', 'Unnamed: 8', 'Unnamed: 9', 'Unnamed: 10', 'Unnamed: 11', 'Unnamed: 12', 'Unnamed: 13', 'Unnamed: 14', 'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18', 'Unnamed: 19', 'Unnamed: 20', 'Unnamed: 21', 'Unnamed: 22']
+
+========================================
+File: 10_28_2014_PLN_48_57.xlsx
+========================================
+
+Sheet: Info
+Columns: ['Unnamed: 0', 'Unnamed: 1', 'Unnamed: 2', 'TEST REPORT', 'Unnamed: 4', 'Unnamed: 5', 'Unnamed: 6', 'Unnamed: 7', 'Unnamed: 8', 'Unnamed: 9', 'Unnamed: 10', 'Unnamed: 11', 'Unnamed: 12', 'Unnamed: 13', 'Unnamed: 14', 'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18', 'Unnamed: 19', 'Unnamed: 20', 'Unnamed: 21', 'Unnamed: 22']
+First row values: [nan, nan, nan, '10_28_2014_PLN_48_57', nan, nan, nan, nan, nan, nan, nan, 'C:\\ArbinSoftware\\MITS_PRO\\Data\\10_28_2014_PLN_48_57.res', nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan]
+
+Sheet: Channel_1-003
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.000125996899987, Timestamp('2014-10-28 09:32:05'), 10.000126603406926, 1, 1, 0, 3.8351938724517822, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-007
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.000989888337946, Timestamp('2014-10-28 09:32:05'), 10.000990479807522, 1, 1, 0, 3.8506667613983154, 0, 0, 0, 0, 6.475405825767666e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-008
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001039115648885, Timestamp('2014-10-28 09:32:05'), 10.001039717143364, 1, 1, 0, 3.8433425426483154, 0, 0, 0, 0, -6.47544875391759e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-009
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001302109086422, Timestamp('2014-10-28 09:32:06'), 10.00130268050618, 1, 1, 0, 3.837388277053833, 0, 0, 0, 0, -3.237724376958795e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-010
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001521434024538, Timestamp('2014-10-28 09:32:06'), 10.00152202048166, 1, 1, 0, 3.8341944217681885, 0, 0, 0, 0, 3.24249267578125e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-011
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001511283805147, Timestamp('2014-10-28 09:32:06'), 10.00151186023736, 1, 1, 0, 3.836276054382324, 0, 0, 0, 0, 3.237724376958795e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-013
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001978584868558, Timestamp('2014-10-28 09:32:06'), 10.00197928661212, 1, 1, 0, 3.839888095855713, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-014
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.002074859072929, Timestamp('2014-10-28 09:32:06'), 10.0020754505425, 1, 1, 0, 3.839777708053589, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-015
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001001567355816, Timestamp('2014-10-28 09:32:06'), 10.00100213376312, 1, 1, 0, 3.8407373428344727, 0, 0, 0, 0, 3.227699562557973e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-016
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.002395260146365, Timestamp('2014-10-28 09:32:06'), 10.002395856628391, 1, 1, 0, 3.839236259460449, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+========================================
+File: 11_7_2014_PLN139_150.xlsx
+========================================
+
+Sheet: Info
+Columns: ['Unnamed: 0', 'Unnamed: 1', 'Unnamed: 2', 'TEST REPORT', 'Unnamed: 4', 'Unnamed: 5', 'Unnamed: 6', 'Unnamed: 7', 'Unnamed: 8', 'Unnamed: 9', 'Unnamed: 10', 'Unnamed: 11', 'Unnamed: 12', 'Unnamed: 13', 'Unnamed: 14', 'Unnamed: 15', 'Unnamed: 16', 'Unnamed: 17', 'Unnamed: 18', 'Unnamed: 19', 'Unnamed: 20', 'Unnamed: 21', 'Unnamed: 22']
+First row values: [nan, nan, nan, '11_7_2014_PLN139_150', nan, nan, nan, nan, nan, nan, nan, 'C:\\ArbinSoftware\\MITS_PRO\\Data\\11_7_2014_PLN139_150.res', nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan]
+
+Sheet: Channel_1-003
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.015403350247151, Timestamp('2014-11-07 10:09:46'), 10.015404142214887, 1, 1, 0, 3.84490704536438, 0, 0, 0, 0, 3.237724376958795e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-004
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.004930870162015, Timestamp('2014-11-07 10:09:46'), 10.00493148669386, 1, 1, 0, 3.8400120735168457, 0, 0, 0, 0, 3.237724376958795e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-007
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.01480369032288, Timestamp('2014-11-07 10:09:46'), 10.01480440209135, 1, 1, 0, 3.8446767330169678, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-008
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.00041443355414, Timestamp('2014-11-07 10:09:46'), 10.000415004973895, 1, 1, 0, 3.845932722091675, 0, 0, 0, 0, 6.47544875391759e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-009
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.000482427492924, Timestamp('2014-11-07 10:09:46'), 10.000483028987407, 1, 1, 0, 3.838036060333252, 0, 0, 0, 0, -3.237724376958795e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-010
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.00070549172174, Timestamp('2014-11-07 10:09:46'), 10.000706093216222, 1, 1, 0, 3.839707851409912, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-011
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.00094896165087, Timestamp('2014-11-07 10:09:46'), 10.000949648357071, 1, 1, 0, 3.8422675132751465, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-012
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001015687438793, Timestamp('2014-11-07 10:09:46'), 10.00101630898309, 1, 1, 0, 3.839526653289795, 0, 0, 0, 0, 3.23295607813634e-05, 0, 0, 0, 0]
+
+Sheet: Channel_1-013
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001189464207222, Timestamp('2014-11-07 10:09:46'), 10.001190040639434, 1, 1, 0, 3.840050220489502, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-014
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.001359376373603, Timestamp('2014-11-07 10:09:46'), 10.001359972855631, 1, 1, 0, 3.8376715183258057, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-015
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.00074015284129, Timestamp('2014-11-07 10:09:46'), 10.00074083954749, 1, 1, 0, 3.838794708251953, 0, 0, 0, 0, 0.0, 0, 0, 0, 0]
+
+Sheet: Channel_1-016
+Columns: ['Data_Point', 'Test_Time(s)', 'Date_Time', 'Step_Time(s)', 'Step_Index', 'Cycle_Index', 'Current(A)', 'Voltage(V)', 'Charge_Capacity(Ah)', 'Discharge_Capacity(Ah)', 'Charge_Energy(Wh)', 'Discharge_Energy(Wh)', 'dV/dt(V/s)', 'Internal_Resistance(Ohm)', 'Is_FC_Data', 'AC_Impedance(Ohm)', 'ACI_Phase_Angle(Deg)']
+First row values: [1, 10.00165102601078, Timestamp('2014-11-07 10:09:46'), 10.001651622492808, 1, 1, 0, 3.8405332565307617, 0, 0, 0, 0, 3.24249267578125e-05, 0, 0, 0, 0]

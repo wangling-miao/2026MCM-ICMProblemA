@@ -1,0 +1,166 @@
+%% MCM/ICM Paper Template
+%% 
+\documentclass{mcmthesis}
+\mcmsetup{CTeX = false,   % 使用英文宏包
+          tcn = {1234567}, % 你的队伍控制号
+          problem = A,     % 选题 (A/B/C/D/E/F)
+          sheet = true,    % 是否输出摘要页
+          titleinsheet = true, % 摘要页是否包含标题
+          keywordsinsheet = true, % 摘要页是否包含关键词
+          titlepage = false, 
+          abstract = true}
+
+\usepackage{newtxtext}     % Times New Roman 字体
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\setlength{\headheight}{14pt} 
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}      % 三线表
+\usepackage{tabularx}      % 自动宽度的表格
+\usepackage{longtable}     % 长表格
+\usepackage{hyperref}      % 超链接
+\usepackage{xcolor}
+\usepackage{listings}      % 代码块
+\usepackage{lipsum}  
+
+% 标题设置
+\title{Your Paper Title Here}
+
+\begin{document}
+
+% =========================================
+% 0. 摘要页 (Summary Sheet)
+% =========================================
+\begin{abstract}
+    % [第一段：背景与核心目标]
+    % 引用使用如下格式
+    \cite{chen2020global}
+
+    % [Problem 1 摘要]
+    For \textbf{Problem 1}, 
+
+    % [Problem 2 摘要]
+    For \textbf{Problem 2},
+
+    % [Problem 3 摘要]
+    For \textbf{Problem 3},
+
+    % [Problem 4 摘要]
+    For \textbf{Problem 4}, 
+
+    % [结论]
+    In conclusion, 
+
+    \begin{keywords}
+    Keyword 1; Keyword 2; Keyword 3; Algorithm Name; Model Name
+    \end{keywords}
+\end{abstract}
+
+\maketitle
+
+% =========================================
+% 目录
+% =========================================
+\tableofcontents
+\newpage
+
+% =========================================
+% 1. Introduction (引言)
+% =========================================
+\section{Introduction}
+
+\subsection{Background}
+
+\subsection{Problem Restatement}
+
+\subsection{Literature Review}
+
+\subsection{Our Work}
+
+% =========================================
+% 2. Assumptions and Notations (假设与符号)
+% =========================================
+\section{Model Assumptions and Notations}
+
+\subsection{Model Assumptions}
+
+\subsection{Notations}
+
+% =========================================
+% 3. Data Pre-processing (数据预处理)
+% =========================================
+\section{Data Pre-processing}
+
+
+\section{Model Development}
+% =========================================
+% 4. Model for Problem 1 (问题1建模)
+% =========================================
+\subsection{Model for Problem 1:}
+
+% =========================================
+% 5. Model for Problem 2 (问题2建模)
+% =========================================
+\subsection{Model for Problem 2:}
+
+% =========================================
+% 6. Model for Problem 3 (问题3建模)
+% =========================================
+\subsection{Model for Problem 3:}
+
+% =========================================
+% 7. Model for Problem 4 (问题4建模)
+% =========================================
+\subsection{Model for Problem 4:}
+
+% =========================================
+% 8. Sensitivity Analysis (灵敏度分析)
+% =========================================
+\section{Sensitivity Analysis}
+
+% =========================================
+% 10. Model Extension (模型推广)
+% =========================================
+\section{Model Extension}
+
+% =========================================
+% 9. Conclusion (结论)
+% =========================================
+\section{Conclusion}
+
+% =========================================
+% References (参考文献)
+% =========================================
+\bibliographystyle{unsrt} 
+\bibliography{ref}
+
+% =========================================
+% Appendices (附录)
+% =========================================
+\newpage
+\appendix
+
+% ----------------------------------------------------
+% 关键修改：将目录深度设为0，禁止Section级别出现在目录中
+% ----------------------------------------------------
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
+\section{Report on Use of AI}
+% 必须包含的 AI 使用报告部分
+\begin{itemize}
+    \item \textbf{OpenAI ChatGPT (GPT-4o)}
+    \begin{itemize}
+        \item \textbf{Query:} How to implement Entropy Weight Method in Python?
+        \item \textbf{Usage:} The code generated was used in Section 5.1 for weight calculation.
+    \end{itemize}
+    
+    \item \textbf{Perplexity AI}
+    \begin{itemize}
+        \item \textbf{Query:} Latest statistics on global AI supercomputing power 2025.
+        \item \textbf{Usage:} Data retrieved was used in Section 3.1.
+    \end{itemize}
+\end{itemize}
+
+\label{LastPage}
+\end{document}

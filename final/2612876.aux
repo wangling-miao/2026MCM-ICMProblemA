@@ -1,0 +1,188 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\HyPL@Entry{1<</S/D>>}
+\citation{bernardi1985general}
+\citation{WAAG2014321}
+\citation{schmalstieg2014full}
+\citation{pop2008battery}
+\citation{hu2012comparative}
+\citation{7100138}
+\citation{schmalstieg2014full}
+\citation{hu2012comparative}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{3}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Background}{3}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Problem Restatement}{3}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Literature Review}{3}{subsection.1.3}\protected@file@percent }
+\citation{plett2004extended}
+\citation{bernardi1985general}
+\citation{schmalstieg2014full}
+\citation{5227097}
+\citation{WAAG2014321}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}Our Work}{4}{subsection.1.4}\protected@file@percent }
+\citation{hu2012comparative}
+\citation{bernardi1985general}
+\citation{plett2004extended}
+\citation{schmalstieg2014full}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Diagram of the multi-physics coupled modeling framework. The system integrates user load characteristics, battery electrochemical dynamics, thermal feedback mechanisms, and aging models to achieve high-precision Time-to-Empty (TTE) prediction.}}{5}{figure.1}\protected@file@percent }
+\newlabel{fig:framework}{{1}{5}{Diagram of the multi-physics coupled modeling framework. The system integrates user load characteristics, battery electrochemical dynamics, thermal feedback mechanisms, and aging models to achieve high-precision Time-to-Empty (TTE) prediction}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Model Assumptions and Notations}{5}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Model Assumptions}{5}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Notations}{5}{subsection.2.2}\protected@file@percent }
+\gdef \LT@i {\LT@entry 
+    {1}{82.46037pt}\LT@entry 
+    {1}{293.85587pt}\LT@entry 
+    {1}{82.46037pt}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{Nomenclature}}{6}{table.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Data Pre-processing}{6}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Outlier Detection and Removal}{6}{subsection.3.1}\protected@file@percent }
+\citation{savitzky1964smoothing}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Signal Denoising via Savitzky-Golay Filter}{7}{subsection.3.2}\protected@file@percent }
+\citation{WAAG2014321}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Comparison between raw and preprocessed data. The optimized SG filter effectively removes noise while retaining the sharp voltage jumps critical for internal resistance estimation. The PSD plot (bottom left) confirms that high-frequency noise has been effectively suppressed.}}{8}{figure.2}\protected@file@percent }
+\newlabel{fig:preprocessing}{{2}{8}{Comparison between raw and preprocessed data. The optimized SG filter effectively removes noise while retaining the sharp voltage jumps critical for internal resistance estimation. The PSD plot (bottom left) confirms that high-frequency noise has been effectively suppressed}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Feature Analysis of the Discharge Process}{8}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Distribution of battery discharge capacities across 141 samples. The probability density curve (red line) indicates that most batteries are in a healthy state (approx. 1.55 Ah), but the long-tail distribution reveals the presence of aged or low-capacity batteries, providing rich test cases for model validation.}}{9}{figure.3}\protected@file@percent }
+\newlabel{fig:capacity_dist}{{3}{9}{Distribution of battery discharge capacities across 141 samples. The probability density curve (red line) indicates that most batteries are in a healthy state (approx. 1.55 Ah), but the long-tail distribution reveals the presence of aged or low-capacity batteries, providing rich test cases for model validation}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Model Development}{9}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Basic Power Consumption Model and Governing Equations}{9}{subsection.4.1}\protected@file@percent }
+\newlabel{eq:simple_ode}{{5}{9}{Basic Power Consumption Model and Governing Equations}{equation.5}{}}
+\newlabel{eq:simple_power_model}{{6}{9}{Basic Power Consumption Model and Governing Equations}{equation.6}{}}
+\citation{5227097}
+\citation{7100138}
+\citation{zhang2010accurate}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Component Power Consumption Modeling}{10}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}Screen Power Consumption}{10}{subsubsection.4.2.1}\protected@file@percent }
+\newlabel{eq:display_power}{{7}{10}{Screen Power Consumption}{equation.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}Processor Load}{10}{subsubsection.4.2.2}\protected@file@percent }
+\newlabel{eq:cpu_freq_scaled}{{8}{10}{Processor Load}{equation.8}{}}
+\newlabel{eq:throttling}{{9}{10}{Processor Load}{equation.9}{}}
+\newlabel{eq:cpu_power_throttled}{{10}{10}{Processor Load}{equation.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3}Network Connectivity}{10}{subsubsection.4.2.3}\protected@file@percent }
+\citation{broadcom2021gnss}
+\citation{almasri2024evaluating}
+\citation{7414387}
+\citation{huang2025mnnaecsenergyoptimizationllm}
+\newlabel{eq:conn_power}{{11}{11}{Network Connectivity}{equation.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.4}GPS Usage}{11}{subsubsection.4.2.4}\protected@file@percent }
+\newlabel{eq:gps_power}{{12}{11}{GPS Usage}{equation.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.5}Background Tasks}{11}{subsubsection.4.2.5}\protected@file@percent }
+\newlabel{eq:bg_power}{{13}{11}{Background Tasks}{equation.13}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.6}On-Device AI Power Consumption}{11}{subsubsection.4.2.6}\protected@file@percent }
+\newlabel{eq:ai_power_heterogeneous}{{14}{11}{On-Device AI Power Consumption}{equation.14}{}}
+\citation{wang2009tradeoff}
+\citation{hu2012comparative}
+\citation{Zhang2025}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.7}Total Power Integration}{12}{subsubsection.4.2.7}\protected@file@percent }
+\newlabel{eq:total_power_sum}{{15}{12}{Total Power Integration}{equation.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.8}Scenario Prediction Based on Hidden Markov Model}{12}{subsubsection.4.2.8}\protected@file@percent }
+\newlabel{eq:markov_transition}{{17}{12}{Scenario Prediction Based on Hidden Markov Model}{equation.17}{}}
+\newlabel{eq:mode_power}{{18}{12}{Scenario Prediction Based on Hidden Markov Model}{equation.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Equivalent Circuit and Thermodynamic Model}{12}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Second-Order RC Thevenin Model}{12}{subsubsection.4.3.1}\protected@file@percent }
+\newlabel{eq:terminal_voltage}{{19}{12}{Second-Order RC Thevenin Model}{equation.19}{}}
+\newlabel{eq:rc_dynamics}{{20}{12}{Second-Order RC Thevenin Model}{equation.20}{}}
+\citation{bernardi1985general}
+\citation{plett2004extended}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}Arrhenius Temperature Compensation}{13}{subsubsection.4.3.2}\protected@file@percent }
+\newlabel{eq:arrhenius_combined}{{21}{13}{Arrhenius Temperature Compensation}{equation.21}{}}
+\newlabel{eq:ocv_soc}{{22}{13}{Arrhenius Temperature Compensation}{equation.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3}Thermodynamic Model}{13}{subsubsection.4.3.3}\protected@file@percent }
+\newlabel{eq:thermal_dynamics}{{23}{13}{Thermodynamic Model}{equation.23}{}}
+\newlabel{eq:heat_generation}{{24}{13}{Thermodynamic Model}{equation.24}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}System Coupled Dynamic Equations}{13}{subsection.4.4}\protected@file@percent }
+\newlabel{eq:soc_deterministic}{{25}{13}{System Coupled Dynamic Equations}{equation.25}{}}
+\newlabel{eq:soc_dynamics}{{26}{13}{System Coupled Dynamic Equations}{equation.26}{}}
+\citation{schmalstieg2014full}
+\citation{schmalstieg2014full}
+\citation{plett2004extended}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Continuous-Time Coupled Battery Modeling Framework. This diagram illustrates the closed-loop feedback mechanism where the stochastic user load (HMM) drives the battery SDE system (Eq. \ref {eq:soc_dynamics}).}}{14}{figure.4}\protected@file@percent }
+\newlabel{fig:model_coupling}{{4}{14}{Continuous-Time Coupled Battery Modeling Framework. This diagram illustrates the closed-loop feedback mechanism where the stochastic user load (HMM) drives the battery SDE system (Eq. \ref {eq:soc_dynamics})}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Internal Battery Dynamics and Aging}{14}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.1}SEI Film Growth Dynamics}{14}{subsubsection.4.5.1}\protected@file@percent }
+\newlabel{eq:sei_growth}{{27}{14}{SEI Film Growth Dynamics}{equation.27}{}}
+\newlabel{eq:sei_current}{{28}{14}{SEI Film Growth Dynamics}{equation.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.5.2}Aging Feedback on Parameters}{14}{subsubsection.4.5.2}\protected@file@percent }
+\newlabel{eq:capacity_fade}{{29}{14}{Aging Feedback on Parameters}{equation.29}{}}
+\citation{pop2008battery}
+\citation{plett2004extended}
+\citation{Zhang2025}
+\newlabel{eq:resistance_rise}{{30}{15}{Aging Feedback on Parameters}{equation.30}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Battery Endurance Prediction Model}{15}{subsection.4.6}\protected@file@percent }
+\newlabel{eq:tte_power}{{31}{15}{Battery Endurance Prediction Model}{equation.31}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.6.1}Stochastic Prediction and Confidence Intervals}{15}{subsubsection.4.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Model Solution}{15}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}State Estimation Algorithm}{15}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1}Extended Kalman Filter (EKF)}{15}{subsubsection.5.1.1}\protected@file@percent }
+\newlabel{eq:state_equation}{{33}{15}{Extended Kalman Filter (EKF)}{equation.33}{}}
+\newlabel{eq:measurement_equation}{{34}{15}{Extended Kalman Filter (EKF)}{equation.34}{}}
+\newlabel{eq:state_transition_measurement}{{35}{15}{Extended Kalman Filter (EKF)}{equation.35}{}}
+\citation{Wang2024}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.2}Adaptive Extended Kalman Filter (AEKF)}{16}{subsubsection.5.1.2}\protected@file@percent }
+\newlabel{eq:adaptive_Q_improved}{{36}{16}{Adaptive Extended Kalman Filter (AEKF)}{equation.36}{}}
+\newlabel{eq:adaptive_R}{{37}{16}{Adaptive Extended Kalman Filter (AEKF)}{equation.37}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.3}Physics-Informed Neural Network (PINN) Correction}{16}{subsubsection.5.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Parameter Identification and Model Calibration}{16}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}OCV-SOC Relationship Fitting}{16}{subsubsection.5.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 7th-order polynomial fit of OCV-SOC. The red line represents the fitted curve, while the blue dots represent measured data, demonstrating extremely high accuracy.}}{16}{figure.5}\protected@file@percent }
+\newlabel{fig:ocv_fit}{{5}{16}{7th-order polynomial fit of OCV-SOC. The red line represents the fitted curve, while the blue dots represent measured data, demonstrating extremely high accuracy}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.2}Dynamic Parameter Identification}{17}{subsubsection.5.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Key Model Parameters Based on Experimental Data}}{17}{table.2}\protected@file@percent }
+\newlabel{tab:params}{{2}{17}{Key Model Parameters Based on Experimental Data}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Numerical Solution Algorithm}{17}{subsection.5.3}\protected@file@percent }
+\newlabel{eq:discrete_V}{{40}{17}{Numerical Solution Algorithm}{equation.40}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Results Analysis and Discussion}{17}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Multi-Scenario Time-to-Empty Prediction}{17}{subsubsection.5.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces TTE Prediction Under Different Modes and Initial Charge Levels (h)}}{18}{table.3}\protected@file@percent }
+\newlabel{tab:tte_scenarios}{{3}{18}{TTE Prediction Under Different Modes and Initial Charge Levels (h)}{table.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2}Uncertainty Quantification and Probability Distribution}{18}{subsubsection.5.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Probability distribution of TTE under mixed scenarios (N=200). The narrow confidence interval ($\approx 1.4$h) indicates that random errors are effectively smoothed at the integration scale, demonstrating model robustness.}}{18}{figure.6}\protected@file@percent }
+\newlabel{fig:tte_dist}{{6}{18}{Probability distribution of TTE under mixed scenarios (N=200). The narrow confidence interval ($\approx 1.4$h) indicates that random errors are effectively smoothed at the integration scale, demonstrating model robustness}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.3}Key Drivers and Counter-Intuitive Findings}{18}{subsubsection.5.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Sensitivity Analysis}{19}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Sensitivity analysis results of model parameters. The left plot shows that $Q_{n,0}$ (capacity) is the dominant factor; the Morris screening plot on the right further confirms that average power $P_{avg}$ and capacity have the greatest impact on the mean ($\mu ^*$).}}{20}{figure.7}\protected@file@percent }
+\newlabel{fig:sensitivity}{{7}{20}{Sensitivity analysis results of model parameters. The left plot shows that $Q_{n,0}$ (capacity) is the dominant factor; the Morris screening plot on the right further confirms that average power $P_{avg}$ and capacity have the greatest impact on the mean ($\mu ^*$)}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Assumption Robustness Analysis}{20}{subsection.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Comparison of TTE Prediction Deviations Under Different Assumptions (Baseline: Full Coupled Model)}}{20}{table.4}\protected@file@percent }
+\newlabel{tab:assumption_test}{{4}{20}{Comparison of TTE Prediction Deviations Under Different Assumptions (Baseline: Full Coupled Model)}{table.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Practical Recommendations and Model Extension}{21}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Optimization Guidelines for End Users}{21}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Model-Driven Scheduling for Operating Systems}{21}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Assessment of Long-Term Aging Impacts}{22}{subsection.7.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Assessment of aging impact after 500 cycles. Left: Comparison of TTE between fresh and aged batteries under different modes; Right: Capacity fade curve shows SOH remains at 99.8\%.}}{22}{figure.8}\protected@file@percent }
+\newlabel{fig:aging_impact}{{8}{22}{Assessment of aging impact after 500 cycles. Left: Comparison of TTE between fresh and aged batteries under different modes; Right: Capacity fade curve shows SOH remains at 99.8\%}{figure.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Model Evaluation and Extension}{22}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Analysis of Model Strengths and Weaknesses}{22}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.1}Strengths}{22}{subsubsection.8.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.2}Limitations}{23}{subsubsection.8.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Generalization and Extension of the Model}{23}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{23}{section.9}\protected@file@percent }
+\bibstyle{unsrt}
+\bibdata{ref}
+\bibcite{bernardi1985general}{1}
+\bibcite{WAAG2014321}{2}
+\bibcite{schmalstieg2014full}{3}
+\bibcite{pop2008battery}{4}
+\bibcite{hu2012comparative}{5}
+\bibcite{7100138}{6}
+\bibcite{plett2004extended}{7}
+\bibcite{5227097}{8}
+\bibcite{savitzky1964smoothing}{9}
+\bibcite{zhang2010accurate}{10}
+\bibcite{broadcom2021gnss}{11}
+\bibcite{almasri2024evaluating}{12}
+\bibcite{7414387}{13}
+\bibcite{huang2025mnnaecsenergyoptimizationllm}{14}
+\bibcite{wang2009tradeoff}{15}
+\bibcite{Zhang2025}{16}
+\bibcite{Wang2024}{17}
+\@writefile{toc}{\setcounter {tocdepth}{0}}
+\newlabel{ai:sei}{{1}{26}{Report on Use of AI Tools}{Item.16}{}}
+\newlabel{ai:network}{{2}{26}{Report on Use of AI Tools}{Item.17}{}}
+\newlabel{ai:dataset}{{3}{26}{Report on Use of AI Tools}{Item.18}{}}
+\newlabel{ai:metrics}{{4}{26}{Report on Use of AI Tools}{Item.19}{}}
+\newlabel{LastPage}{{9}{27}{Report on Use of AI Tools}{page.27}{}}
+\gdef\lastpage@lastpage{27}
+\gdef\lastpage@lastpageHy{27}
+\gdef \@abspage@last{28}

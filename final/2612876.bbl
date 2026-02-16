@@ -1,0 +1,87 @@
+\begin{thebibliography}{10}
+
+\bibitem{bernardi1985general}
+D.~Bernardi, E.~Pawlikowski, and J.~Newman.
+\newblock A general energy balance for battery systems.
+\newblock {\em Journal of The Electrochemical Society}, 132(1):5, jan 1985.
+
+\bibitem{WAAG2014321}
+Wladislaw Waag, Christian Fleischer, and Dirk~Uwe Sauer.
+\newblock Critical review of the methods for monitoring of lithium-ion batteries in electric and hybrid vehicles.
+\newblock {\em Journal of Power Sources}, 258:321--339, 2014.
+
+\bibitem{schmalstieg2014full}
+Johannes Schmalstieg, Stefan Käbitz, Madeleine Ecker, and Dirk~Uwe Sauer.
+\newblock A holistic aging model for li(nimnco)o2 based 18650 lithium-ion batteries.
+\newblock {\em Journal of Power Sources}, 257:325--334, 2014.
+
+\bibitem{pop2008battery}
+V.~Pop, H.J. Bergveld, D.~Danilov, P.H.L. Notten, and P.P.L. Regtien.
+\newblock {\em Battery management systems : accurate state-of-charge indication for battery-powered applications}.
+\newblock Philips research book series. Springer, Germany, 2008.
+
+\bibitem{hu2012comparative}
+Xiaosong Hu, Shengbo Li, and Huei Peng.
+\newblock A comparative study of equivalent circuit models for li-ion batteries.
+\newblock {\em Journal of Power Sources}, 198:359--367, 2012.
+
+\bibitem{7100138}
+Yin Hang and Hussameddine Kabban.
+\newblock Thermal management in mobile devices: challenges and solutions.
+\newblock In {\em 2015 31st Thermal Measurement, Modeling \& Management Symposium (SEMI-THERM)}, pages 46--49, 2015.
+
+\bibitem{plett2004extended}
+Gregory~L. Plett.
+\newblock Extended kalman filtering for battery management systems of lipb-based hev battery packs: Part 3. state and parameter estimation.
+\newblock {\em Journal of Power Sources}, 134(2):277--292, 2004.
+
+\bibitem{5227097}
+Mian Dong, Yung-Seok~Kevin Choi, and Lin Zhong.
+\newblock Power modeling of graphical user interfaces on oled displays.
+\newblock In {\em 2009 46th ACM/IEEE Design Automation Conference}, pages 652--657, 2009.
+
+\bibitem{savitzky1964smoothing}
+Abraham. Savitzky and M.~J.~E. Golay.
+\newblock Smoothing and differentiation of data by simplified least squares procedures.
+\newblock {\em Analytical Chemistry}, 36(8):1627--1639, 1964.
+
+\bibitem{zhang2010accurate}
+Lide Zhang et~al.
+\newblock Accurate online power estimation and automatic battery behavior based power model generation for smartphones.
+\newblock In {\em Proc. CODES+ISSS}, pages 105--114, 2010.
+
+\bibitem{broadcom2021gnss}
+Broadcom.
+\newblock Bcm4778: Low power l1/l5 dual band gnss receiver chip for mobile and wearable applications, Sep 2021.
+\newblock Technical Report.
+
+\bibitem{almasri2024evaluating}
+Abdullah Almasri, Tatyana~Y El-Kour, Liliana Silva, and Yousef Abdulfattah.
+\newblock Evaluating the energy efficiency of popular us smartphone health care apps: Comparative analysis study toward sustainable health and nutrition apps practices.
+\newblock {\em JMIR Human Factors}, 11:e58311, May 2024.
+
+\bibitem{7414387}
+Lo’ai~A. Tawalbeh, Anas Basalamah, Rashid Mehmood, and Hala Tawalbeh.
+\newblock Greener and smarter phones for future cities: Characterizing the impact of gps signal strength on power consumption.
+\newblock {\em IEEE Access}, 4:858--868, 2016.
+
+\bibitem{huang2025mnnaecsenergyoptimizationllm}
+Zhengxiang Huang, Chaoyue Niu, Zhaode Wang, Jiarui Xue, Hanming Zhang, Yugang Wang, Zewei Xin, Xiaotang Jiang, Chengfei Lv, Fan Wu, and Guihai Chen.
+\newblock Mnn-aecs: Energy optimization for llm decoding on mobile devices via adaptive core selection, 2025.
+
+\bibitem{wang2009tradeoff}
+Yi~Wang, Bhaskar Krishnamachari, Qing Zhao, and Murali Annavaram.
+\newblock The tradeoff between energy efficiency and user state estimation accuracy in mobile sensing.
+\newblock In Thomas Phan, Rebecca Montanari, and Petros Zerfos, editors, {\em Mobile Computing, Applications, and Services}, pages 42--58, Berlin, Heidelberg, 2010. Springer Berlin Heidelberg.
+
+\bibitem{Zhang2025}
+Zhaowei Zhang, Chen Liu, Tianyu Li, Tian Wang, Yaoyao Cui, and Pengcheng Zhao.
+\newblock Cnn-lstm optimized with swats for accurate state-of-charge estimation in lithium-ion batteries considering internal resistance.
+\newblock {\em Scientific Reports}, 15(1):29572, 2025.
+
+\bibitem{Wang2024}
+Fujin Wang, Zhi Zhai, Zhibin Zhao, Yi~Di, and Xuefeng Chen.
+\newblock Physics-informed neural network for lithium-ion battery degradation stable modeling and prognosis.
+\newblock {\em Nature Communications}, 15(1):4332, 2024.
+
+\end{thebibliography}

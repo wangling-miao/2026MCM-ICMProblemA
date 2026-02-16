@@ -1,0 +1,783 @@
+%% MCM/ICM Paper Template
+%% 
+\documentclass{mcmthesis}
+\mcmsetup{CTeX = false,   % 使用英文宏包
+          tcn = {2612876}, % 你的队伍控制号
+          problem = A,     % 选题 (A/B/C/D/E/F)
+          sheet = true,    % 是否输出摘要页
+          titleinsheet = true, % 摘要页是否包含标题
+          keywordsinsheet = true, % 摘要页是否包含关键词
+          titlepage = false, 
+          abstract = true}
+
+\usepackage{newtxtext}     % Times New Roman 字体
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\setlength{\headheight}{14pt} 
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}      % 三线表
+\usepackage{tabularx}      % 自动宽度的表格
+\usepackage{longtable}     % 长表格
+\usepackage{lastpage}     % 长表格
+\usepackage{hyperref}      % 超链接
+\usepackage{xcolor}
+\usepackage{listings}      % 代码块
+\usepackage{lipsum}  
+\usepackage{float}
+
+
+% 标题设置
+\title{Smartphone Battery Depletion Time Prediction Model Based on Stochastic Differential Equations}
+
+\begin{document}
+
+% =========================================
+% 0. 摘要页 (Summary Sheet)
+% =========================================
+\begin{abstract}
+    Addressing stochastic battery states, we constructed a \textbf{Stochastic Differential Equation (SDE)} system based on \textbf{second-order Stiff ODEs} and a \textbf{second-order Thevenin equivalent circuit} to resolve continuous-time state evolution and Time-to-Exhaustion (TTE).
+
+    First, employing a \textbf{"layer-by-layer expansion + randomization"} strategy, we built a coupled \textbf{SDE model}. Starting from charge conservation (first-order ODE), we integrated power loads (screen, CPU, network, GPS, background, AI) and characterized nonlinear temperature-current responses via Arrhenius and Peukert laws. A \textbf{Hidden Markov Model (HMM)} drives user behavior transitions, incorporating Wiener process noise to extend the deterministic ODE into an Itô-type SDE.
+
+    Second, following \textbf{parameter calibration} (polynomial OCV fitting; nonlinear least squares for RC) and solving via a \textbf{hybrid numerical strategy} (adaptive step-size Euler combined with implicit Euler for stiff terms) and \textbf{Monte Carlo simulation} (200 samples), we derived TTE values: Standby \textbf{24.0h}, Light Use \textbf{13.5h}, Video \textbf{7.2h}, Navigation \textbf{4.3h}, Gaming \textbf{2.25h} (90\% CI $\pm$1.4h). The model attributes discharge variations to nonlinear Ohmic heat and polarization superposition, where high loads increase resistance and voltage drop. \textbf{Most significant reduction} occurs in gaming (24$\times$ standby power), while SOH shows \textbf{surprisingly negligible impact} (0.3\% TTE drop after 500 cycles).
+
+    Third, \textbf{Morris method} sensitivity analysis on capacity $Q_n$, resistance $R_0$, temperature $T_{amb}$, and power $P_{avg}$ identifies \textbf{capacity} (0.87) and \textbf{power} as dominant, followed by $T_{amb}$ (-0.26) and $R_0$ (-0.10). Robustness analysis shows simplified models yield only 0.3\% error in light use, but neglecting $R_0$ under high loads biases predictions by 5.8\%. Crucially, ignoring Arrhenius-based compensation in cold environments causes \textbf{28.6\%} error, confirming the need for nonlinear coupled modeling.
+
+    Finally, we propose recommendations: \textbf{User Level}: Reduce brightness (doubles runtime), switch to light mode under 20\% (adds 45min), and insulate in cold. \textbf{System Level}: Implement low-temp dynamic cutoff and predictive suspension. \textbf{Evaluation}: With SOH at 99.8\% after 500 cycles, app power inflation is confirmed as the primary cause of perceived degradation. The framework extends to EVs and UAVs.
+
+    In summary, this physics-driven stochastic framework integrates microscopic electrochemical mechanisms and macroscopic user data to quantify smartphone battery TTE and uncertainty.
+
+    \begin{keywords}
+        Stochastic differential equations; Hidden Markov Model (HMM); Extended Kalman Filter (EKF); Monte Carlo simulation; Nonlinear least squares method
+    \end{keywords}
+\end{abstract}
+
+\maketitle
+
+% =========================================
+% 目录
+% =========================================
+{
+    \setlength{\parskip}{2pt} % 调整目录段落间距
+    \linespread{1.2}\selectfont % 调整目录行距
+    \tableofcontents
+}
+\newpage
+
+% =========================================
+% 1. Introduction (引言)
+% =========================================
+\section{Introduction}
+
+\subsection{Background}
+
+Smartphones have become deeply integrated into all aspects of modern life, yet their battery performance often exhibits significant stochasticity and unpredictability. Users frequently observe that even under similar usage durations, the rate of battery depletion can vary drastically. The physical essence of this phenomenon lies in the dynamic coupling of multiple nonlinear factors influencing the battery discharge process: high screen refresh rates and brightness, high-frequency 5G network communication, and silent wake-ups of background processes are primary sources of power consumption. Furthermore, the internal chemical state of lithium-ion batteries is highly sensitive to ambient temperature—low temperatures lead to decreased ionic conductivity and increased internal resistance, while high temperatures, despite enhancing activity, accelerate side reactions and aging, thereby altering the battery's effective capacity and voltage response characteristics \cite{bernardi1985general,WAAG2014321,schmalstieg2014full}. Consequently, relying solely on simple linear extrapolation fails to accurately predict the remaining Time-to-Empty (TTE); continuous-time models incorporating physical mechanisms must be adopted to analyze this complex system \cite{pop2008battery}.
+
+
+\subsection{Problem Restatement}
+Regarding the problem of smartphone battery life prediction, this study is dedicated to addressing the following core tasks:
+
+\begin{itemize}
+    \item \textbf{Continuous-Time Dynamics Modeling:} Rather than relying on discrete data fitting or black-box regression, this approach employs systems of differential equations to describe the continuous evolution of the battery's State of Charge (SOC) over time. The model must explicitly incorporate the driving effects of the screen, processor (CPU), network connectivity, GPS, and background tasks on instantaneous discharge current \cite{hu2012comparative}.
+    \item \textbf{Multi-Scenario Battery Life Prediction:} Based on the model, we calculate the time-to-depletion under varying initial charge levels and load patterns, quantify the contribution weight of each power-consuming component to battery life reduction, and explain the differences in model performance under different operating conditions.
+    \item \textbf{Uncertainty and Sensitivity Analysis:} This involves evaluating the perturbations in prediction results caused by parameter drift, simplifying assumptions, and fluctuations in user behavior, thereby identifying key factors affecting the model's robustness.
+    \item \textbf{Formulation of Optimization Strategies:} The results of the model analysis are translated into concrete recommendations for adjusting user habits (e.g., brightness control, network switching) and optimizing system scheduling (e.g., dynamic frequency scaling), along with a discussion on the impact of battery aging on long-term endurance \cite{7100138,schmalstieg2014full}.
+\end{itemize}
+
+\subsection{Literature Review}
+Current research on Li-ion battery modeling primarily focuses on three directions: electrochemical mechanisms, equivalent circuits, and data-driven approaches.
+
+Regarding \textbf{battery cell modeling}, the Pseudo-Two-Dimensional (P2D) model by Doyle et al. offers clear physical significance but entails high computational costs, making it unsuitable for online mobile applications. In contrast, the second-order RC Thevenin Equivalent Circuit Model (ECM), which balances polarization effect capture with computational efficiency, is widely adopted in Battery Management Systems (BMS) \cite{hu2012comparative}.
+
+In \textbf{state estimation}, the Extended Kalman Filter (EKF) remains the mainstream method for handling battery nonlinearities. Research by Plett et al. demonstrates that EKF corrects State of Charge (SOC) via terminal voltage observations with superior accuracy compared to traditional Ampere-hour integration \cite{plett2004extended}.
+
+In the \textbf{thermal and aging} domain, the Bernardi equation established the foundation for battery heat generation calculations \cite{bernardi1985general}. Capacity fade primarily stems from SEI film growth on the anode and loss of active lithium ions, a cumulative process described by Ramadass et al. using semi-empirical formulas \cite{schmalstieg2014full}.
+
+On the \textbf{power consumption side}, Carroll and Heiser decomposed and measured the energy consumption of smartphone components, quantifying the impact of DVFS on CPU power usage \cite{5227097}.
+
+In summary, while theories in these subfields are mature, existing literature lacks a continuous-time framework that fully couples "application-layer load decomposition," "battery electrochemical dynamics," and "thermal-aging feedback" \cite{WAAG2014321}.
+
+
+\subsection{Our Work}
+\begin{enumerate}
+    \item \textbf{Load Decomposition Layer:} Based on real-world application power consumption data, a Hidden Markov Model (HMM) is constructed to simulate stochastic user switching between different tasks (e.g., video, gaming, standby), mapping high-level user behavior to underlying current excitation $I(t)$.
+    \item \textbf{Battery Dynamics Layer:} Combining Hybrid Pulse Power Characterization (HPPC) experimental data, the parameters of the second-order RC equivalent circuit are accurately identified. Furthermore, the Arrhenius equation is introduced to dynamically correct the non-linear effects of temperature on internal resistance $R_0$ and polarization effects.
+    \item \textbf{Thermal \& Aging Feedback Layer:} An aging model coupling Coulombic efficiency with $\sqrt{t}$ is established to quantify capacity fade and internal resistance increase caused by SEI film growth, achieving unified modeling across time scales (from second-level dynamics to year-level aging).
+    \item \textbf{Observer \& Correction Layer:} The Extended Kalman Filter (EKF) is employed to fuse terminal voltage observations with model predictions in real-time. This corrects SOC estimation deviations within millisecond-level time steps, ensuring the closed-loop stability of Time-to-Empty (TTE) prediction.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/paper_results/framework_diagram.png}
+    \caption{Diagram of the multi-physics coupled modeling framework. The system integrates user load characteristics, battery electrochemical dynamics, thermal feedback mechanisms, and aging models to achieve high-precision Time-to-Empty (TTE) prediction.}
+    \label{fig:framework}
+\end{figure}
+
+% =========================================
+% 2. Assumptions and Notations (假设与符号)
+% =========================================
+\section{Model Assumptions and Notations}
+
+\subsection{Model Assumptions}
+\textbf{1. Second-order RC network describes dynamic characteristics:} It is assumed that electrochemical polarization and concentration polarization are equivalent to two RC circuits. This approach achieves the best balance between accuracy and complexity (RMSE $<1\%$) \cite{hu2012comparative}, thereby avoiding overfitting.
+
+\textbf{2. Uniform internal temperature distribution:} The battery is assumed to be a homogeneous heat-generating body, ignoring internal thermal gradients. Since mobile phone batteries are thin and have high thermal conductivity (Biot number $\ll 0.1$) \cite{bernardi1985general}, they satisfy the conditions for the lumped parameter method.
+
+\textbf{3. User patterns follow the Markov property:} It is assumed that application switching is memoryless. Statistics confirm that this behavioral characteristic is significant, allowing the use of transition probability matrices to simulate loads for endurance prediction.
+
+\textbf{4. Measurement noise follows a Gaussian distribution:} It is assumed that sensor errors are additive Gaussian white noise. According to the Central Limit Theorem, this is a prerequisite for the EKF to perform optimal estimation \cite{plett2004extended}.
+
+\textbf{5. SEI growth dominates aging:} It is assumed that capacity fade is dominated by SEI film growth and can be linearly decomposed. Under normal usage, SEI thickening is the primary cause of lithium loss \cite{schmalstieg2014full}, allowing the use of the parabolic law to simplify the life model.
+
+\subsection{Notations}
+\begin{longtable}{>{\raggedright}p{0.15\textwidth}>{\raggedright}p{0.6\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}}
+    \caption{Nomenclature}                                                                            \\
+    \toprule
+    \textbf{Symbol}       & \textbf{Description}                                    & \textbf{Unit}   \\
+    \midrule
+    \endfirsthead
+
+    \multicolumn{3}{c}{\textbf{Nomenclature (Continued)}}                                             \\
+    \toprule
+    \textbf{Symbol}       & \textbf{Description}                                    & \textbf{Unit}   \\
+    \midrule
+    \endhead
+
+    \midrule
+    \multicolumn{3}{r}{\textit{Continued on next page}}                                               \\
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+
+    $\text{SOC}(t)$       & State of Charge                                         & -               \\
+    $V_{term}(t)$         & Battery terminal voltage                                & V               \\
+    $U_{ocv}(\text{SOC})$ & Open-Circuit Voltage (OCV)                              & V               \\
+    $I(t)$                & Discharge current (positive for discharge)              & A               \\
+    $T(t), T_{amb}$       & Battery temperature and ambient temperature             & $^\circ$C or K  \\
+    $Q_n(t), Q_{n,0}$     & Current effective capacity and initial nominal capacity & Ah              \\
+    $R_0(T)$              & Ohmic internal resistance                               & $\Omega$        \\
+    $R_i, C_i$            & Polarization resistance and capacitance $(i=1,2)$       & $\Omega$, F     \\
+    $\tau_i$              & RC network time constant ($\tau_i = R_i C_i$)           & s               \\
+    $E_a$                 & Activation energy (Arrhenius equation)                  & J/mol           \\
+    $P_{total}(t)$        & Total smartphone power consumption                      & W               \\
+    $P_{base}$            & Screen base power consumption                           & W               \\
+    $b(t)$                & Normalized screen brightness $\in [0,1]$                & -               \\
+    $f(t), f_{req}$       & Actual CPU frequency and requested frequency            & Hz              \\
+    $\gamma(t)$           & Thermal throttling factor $\in [0,1]$                   & -               \\
+    $P_{conn}, P_{gps}$   & Network connectivity and GPS module power consumption   & W               \\
+    $\delta_{SEI}(t)$     & SEI film thickness                                      & m               \\
+    $j_{side}$            & Side reaction current density (aging)                   & A/m$^2$         \\
+    $h$                   & Convective heat transfer coefficient                    & W/(m$^2\cdot$K) \\
+    $C_p$                 & Specific heat capacity                                  & J/(kg$\cdot$K)  \\
+    $t_{empty}$           & Time-to-Empty (TTE)                                     & h               \\
+    $\mathbf{x}_k$        & State vector $[\text{SOC}, V_1, V_2]^T$                 & -               \\
+    $\mathbf{w}_k, v_k$   & Process noise and measurement noise                     & -               \\
+    $dW_t$                & Standard Wiener process                                 & -               \\
+\end{longtable}
+
+% =========================================
+% 3. Data Pre-processing (数据预处理)
+% =========================================
+\section{Data Pre-processing}
+Since raw data exported and downloaded from the MITS Pro software inevitably contain noise and outliers that compromise parameter identification and SOC estimation accuracy, we implemented a robust preprocessing pipeline—including cleaning, denoising, and feature extraction—to ensure high data fidelity.
+
+\subsection{Outlier Detection and Removal}
+Raw time-series data often contain non-physical values caused by sensor malfunctions or invalid resting segments during the testing process. To ensure the accuracy of subsequent RC model parameter identification, we implemented a meticulous data cleaning pipeline.
+
+We first applied a physical constraint filter. The valid dataset is defined as follows:
+\begin{equation}
+    \mathcal{D}_{valid} = \{ (V, I, T) \mid 2.5V \le V \le 4.4V, \quad |I| \le I_{max}, \quad -20^\circ C \le T \le 60^\circ C \}
+\end{equation}
+Note that we set the lower temperature limit to $-20^\circ C$ to ensure the preservation of critical data for analyzing battery performance under extreme cold conditions.
+
+\textbf{Key Strategy for Resting Data:} For zero-current segments in the experimental data, rather than adopting a ``one-size-fits-all'' deletion strategy, we implemented \textbf{Selective Preservation}:
+\begin{itemize}
+    \item \textbf{Discard:} Redundant resting data of long duration ($>60$s) before the start of testing or during cycle intervals.
+    \item \textbf{Preserve:} Short-term ($\sim 10$-$30$s) \textbf{Relaxation Periods} following current interruption. This voltage rebound data contains critical dynamic information for identifying battery polarization parameters ($R_p, C_p$).
+\end{itemize}
+
+\textbf{Analysis of Processing Results:} Our cleaning pipeline demonstrated robust adaptability across data from different sources:
+\begin{itemize}
+    \item For standard Arbin cycle test files (such as the \texttt{PLN\_1to6} series), the redundant data removal rate was approximately \textbf{8\%-20\%} after selective preservation. This ratio indicates that the raw data indeed contained substantial resting stages mandated by the test protocol, and our algorithm successfully distinguished between ``effective relaxation'' and ``invalid waiting.''
+    \item For specific long-duration experimental record files (such as \path{Experimental_data_fresh_cell.csv}), the removal rate was approximately \textbf{39\%} due to the inclusion of device standby data lasting several hours prior to testing. The elimination of this redundant data significantly improved the computational efficiency of subsequent feature extraction algorithms.
+\end{itemize}
+
+\subsection{Signal Denoising via Savitzky-Golay Filter}
+Battery voltage measurements inherently contain noise. While filtering is essential, an excessively large window size risks smoothing out the voltage jump (Ohmic Drop) during instantaneous current steps, resulting in an underestimation of the ohmic internal resistance $R_0$.
+
+We employed the Savitzky-Golay (SG) filter \cite{savitzky1964smoothing}, where the smoothed value is calculated via the convolution of raw data with optimized weights $w_i$:
+\begin{equation}
+    y_j^* = \sum_{i=-m}^{m} w_i y_{j+i}
+\end{equation}
+
+\textbf{Parameter Optimization:} We set the window size to a narrow \textbf{11 points} (approximately 10 seconds, based on a 1 Hz sampling rate). Compared to a wide window (e.g., 50 seconds), this setting effectively suppresses high-frequency noise while maximally preserving the voltage's \textbf{step response characteristics}. This is crucial for capturing authentic voltage dips, which directly determines the accuracy of the model's prediction of the ``cutoff voltage.''
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/processed_data/val_Experimental_data_fresh_cell.png}
+    \caption{Comparison between raw and preprocessed data. The optimized SG filter effectively removes noise while retaining the sharp voltage jumps critical for internal resistance estimation. The PSD plot (bottom left) confirms that high-frequency noise has been effectively suppressed.}
+    \label{fig:preprocessing}
+\end{figure}
+
+\subsection{Feature Analysis of the Discharge Process}
+To construct a high-precision Time-to-Empty (TTE) prediction model, we need to extract two core features that determine battery endurance: capacity and non-linear internal resistance.
+
+First, the \textbf{total discharge capacity} $Q_k$ is calculated via current integration:
+\begin{equation}
+    Q_k = \int_{t_{start}}^{t_{end}} I(t) \, dt
+\end{equation}
+This metric represents the "effective fuel tank size" of the battery, directly determining the baseline endurance.
+
+Second, regarding internal resistance, we extracted the \textbf{temperature-dependent dynamic internal resistance characteristic} $R(SOC, T)$ \cite{WAAG2014321}. Physically, the variation of internal resistance with temperature adheres to the Arrhenius relationship:
+\begin{equation}
+    R(T) = R_{ref} \cdot \exp\left[ \frac{E_a}{k_B} \left( \frac{1}{T} - \frac{1}{T_{ref}} \right) \right]
+\end{equation}
+where $E_a$ denotes the activation energy, $k_B$ is the Boltzmann constant, and $T_{ref}$ represents the reference temperature (typically $298$ K). This characteristic not only captures the exponential growth of internal resistance at low SOC stages but also quantifies the sharp impedance increase caused by the drop in ionic conductivity at low temperatures. This multi-dimensional feature allows the model to accurately reproduce the "voltage plunge" phenomenon at the end of discharge and in cold environments, thereby avoiding overly optimistic predictions of remaining endurance.
+
+\textbf{Results:} We successfully extracted these features from \textbf{141} data files. As shown in Fig. \ref{fig:capacity_dist}, the discharge capacity exhibits distinct distribution characteristics, primarily clustering around 1.55 Ah. However, the presence of low-capacity samples indicates that the dataset covers batteries with varying States of Health (SOH). This diversity is crucial for training a generalized prediction model.
+
+\begin{figure}[H]
+    \centering
+    % Using the chart.jpg provided
+    \includegraphics[width=0.65\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/processed_data/chart.png}
+    \caption{Distribution of battery discharge capacities across 141 samples. The probability density curve (red line) indicates that most batteries are in a healthy state (approx. 1.55 Ah), but the long-tail distribution reveals the presence of aged or low-capacity batteries, providing rich test cases for model validation.}
+    \label{fig:capacity_dist}
+\end{figure}
+
+
+\section{Model Development}
+\subsection{Basic Power Consumption Model and Governing Equations}
+
+In accordance with the problem requirements, we first establish a fundamental continuous-time model describing the evolution of the battery's State of Charge (SOC) based on physical principles. According to the Law of Conservation of Charge, the instantaneous rate of change of SOC is proportional to the current $I(t)$ flowing out of the battery:
+
+\begin{equation} \label{eq:simple_ode}
+    \frac{d \text{SOC}(t)}{dt} = - \frac{1}{Q_{n}} I(t)
+\end{equation}
+
+where $Q_{n}$ is the nominal capacity of the battery. In smartphone applications, energy consumption is typically distributed among various components as power $P_{total}(t)$. Under the first-order approximation of the simplest model, assuming the battery voltage is maintained at the nominal value $V_{nom}$ (e.g., 3.8V), the load current can be expressed as $I(t) \approx P_{total}(t) / V_{nom}$. Substituting this into Equation \eqref{eq:simple_ode} yields the power-driven governing equation:
+
+\begin{equation} \label{eq:simple_power_model}
+    \frac{d \text{SOC}(t)}{dt} = - \frac{P_{total}(t)}{Q_{n} \cdot V_{nom}}
+\end{equation}
+
+Equation \eqref{eq:simple_power_model} establishes the core dynamic constraint of this study. This expression reveals the linear coupling relationship between the decay of remaining charge and the device's total power consumption, laying the mathematical foundation for the subsequent decoupling of $P_{total}(t)$ into the superposition of independent physical components such as the screen, processor, and network.
+
+\subsection{Component Power Consumption Modeling}
+
+Having established the macroscopic battery discharge framework, we now decompose the total power $P_{total}(t)$ into specific hardware subsystem loads.
+
+\subsubsection{Screen Power Consumption}
+As the largest energy consumer in mobile phones, screen power consumption $P_{screen}(t)$ varies with display content. Based on OLED pixel characteristics \cite{5227097}, we model the instantaneous power as:
+\begin{equation}
+    P_{\text{display}}(t) = P_{\text{base}} + \eta_b b(t) + \sum_{c \in \{\text{R,G,B}\}} \eta_c \bar{I}_c(t)
+    \label{eq:display_power}
+\end{equation}
+where $P_{\text{base}}$ is the static power consumption; $b(t) \in [0,1]$ is the normalized brightness; $\bar{I}_c(t)$ is the average intensity of the RGB channels; and $\eta_b, \eta_c$ are fitting coefficients representing brightness gain and the luminous efficiency differences of each color (e.g., lower efficiency for blue light).
+
+\subsubsection{Processor Load}
+CPU power consumption is constrained by computational intensity and thermal management non-linearities. Based on CMOS theory and considering forced regulation during overheating or undervoltage, we introduce thermal throttling feedback. The actual frequency $f(t)$ is defined as the product of the requested frequency $f_{\text{req}}(t)$ and the throttling factor $\gamma(t)$:
+\begin{equation}
+    f(t) = f_{\text{req}}(t) \cdot \gamma(t)
+    \label{eq:cpu_freq_scaled}
+\end{equation}
+where $\gamma(t)$ is determined by the temperature $T(t)$ and terminal voltage $V_{\text{term}}(t)$ \cite{7100138}:
+\begin{equation}
+    \gamma(t) = \min\left(1, \max\left(0, \frac{T_{\text{limit}} - T(t)}{T_{\text{limit}} - T_{\text{thresh}}}\right), \max\left(0, \frac{V_{\text{term}}(t) - V_{\text{cutoff}}}{\Delta V_{\text{safe}}}\right)\right)
+    \label{eq:throttling}
+\end{equation}
+That is, when $T(t)$ rises to $T_{\text{limit}}$ or $V_{\text{term}}(t)$ approaches the cutoff voltage $V_{\text{cutoff}}$ (within the range of $\Delta V_{\text{safe}}$), $\gamma$ decreases to reduce the load. The corrected instantaneous power $P_{\text{CPU}}(t)$ is:
+\begin{equation}
+    P_{\text{CPU}}(t) = C_{\text{eff}} V_{\text{dd}}^2(t) \cdot (f_{\text{req}}(t) \cdot \gamma(t)) + P_{\text{leak}}(T)
+    \label{eq:cpu_power_throttled}
+\end{equation}
+where $C_{\text{eff}}$ is the effective switching capacitance; $V_{\text{dd}}(t)$ is the core voltage adjusted via DVFS; and $P_{\text{leak}}(T)$ is the temperature-dependent leakage power.
+
+\subsubsection{Network Connectivity}
+Wireless energy consumption is constrained by protocols and signal quality; transmission power increases exponentially under weak signal conditions \cite{zhang2010accurate}. We establish a piecewise model to describe the instantaneous power $P_{\text{conn}}(t)$:
+\begin{equation}
+    P_{\text{conn}}(t) = \begin{cases}
+        P_{\text{WiFi}}                                              & \text{WiFi} \\
+        P_{4\text{G}} (1 + \alpha_s (1 - \text{RSSI}_{\text{norm}})) & \text{4G}   \\
+        P_{5\text{G}} (1 + \beta_s (1 - \text{RSRP}_{\text{norm}}))  & \text{5G}
+    \end{cases}
+    \label{eq:conn_power}
+\end{equation}
+Typically, $P_{5\text{G}} > P_{4\text{G}} > P_{\text{WiFi}}$ (see AI Use Report \ref{ai:network}). $\text{RSSI}_{\text{norm}}, \text{RSRP}_{\text{norm}} \in [0,1]$ are normalized signal metrics; $\alpha_s, \beta_s$ are sensitivity factors, simulating the increase in energy consumption caused by the RF front-end boosting transmission power via power amplifiers when signal quality degrades (i.e., metrics approach 0).
+
+\subsubsection{GPS Usage}
+Modern GNSS chips exhibit significant differences in energy consumption between acquisition and tracking phases. Combining data from Broadcom \cite{broadcom2021gnss} and Li et al. \cite{almasri2024evaluating}, we model the instantaneous power $P_{\text{gps}}(t)$ as:
+\begin{equation}
+    P_{\text{gps}}(t) =
+    \begin{cases}
+        P_{\text{acq}} + \kappa_{\text{search}} \cdot (1 - \text{SNR}_{\text{norm}}(t)) & \text{Acquisition Phase} \\
+        P_{\text{track}}                                                                & \text{Tracking Phase}    \\
+        P_{\text{sleep}}                                                                & \text{Sleep State}
+    \end{cases}
+    \label{eq:gps_power}
+\end{equation}
+where $P_{\text{acq}}$ is the high-power satellite search state; $\text{SNR}_{\text{norm}}$ is the normalized Signal-to-Noise Ratio; $\kappa_{\text{search}}$ represents the additional energy consumption caused by extended integration time under weak signal conditions (e.g., urban canyons) \cite{7414387}; $P_{\text{track}}$ is the steady-state tracking power, significantly reduced due to duty cycling; and $P_{\text{sleep}}$ is the standby power.
+
+\subsubsection{Background Tasks}
+Standby "phantom drain" mainly originates from kernel maintenance and application push notifications. We model background power $P_{\text{bg}}(t)$ as a function of baseline standby power and active processes:
+\begin{equation}
+    P_{\text{bg}}(t) = P_{\text{idle}} + \sum_{k=1}^{N_{\text{app}}(t)} \lambda_k \cdot P_{\text{wake}}
+    \label{eq:bg_power}
+\end{equation}
+where $P_{\text{idle}}$ is the deep sleep baseline (leakage current, etc.); $N_{\text{app}}(t)$ is the number of apps holding "wakelocks"; $P_{\text{wake}}$ is the energy pulse of a single wake-up (e.g., message synchronization); and $\lambda_k \in \{0, 1\}$ is the activity factor. Although single-event energy consumption is minute, high-frequency accumulation leads to non-linear battery depletion even when the screen is off.
+
+\subsubsection{On-Device AI Power Consumption}
+For LLM tasks on heterogeneous multi-core architectures, we adopt the MNN-AECS dynamic model \cite{huang2025mnnaecsenergyoptimizationllm}:
+\begin{equation}
+    P_{\text{AI}}(\mathcal{S}) = P_{static} + \sum_{j=1}^{K} \alpha_j \cdot \left[ n_j + (N_j - n_j) \cdot \beta \right] \cdot (f_{max,j} \cdot u)^2
+    \label{eq:ai_power_heterogeneous}
+\end{equation}
+where $P(\mathcal{S})$ is the total power under scheduling strategy $\mathcal{S}$; $P_{static}$ is the static power; $j$ is the core cluster index (little/medium/big cores); $\alpha_j$ is the effective capacitance coefficient for the $j$-th core type; $n_j, N_j$ are the number of active cores and total cores in the $j$-th cluster, respectively; $\beta \approx 0.3$ is the idle core power factor; $f_{max,j}$ is the maximum frequency; and $u \in [0,1]$ is the frequency utilization rate.
+
+\subsubsection{Total Power Integration}
+
+Integrating the energy consumption models of the aforementioned physical components, we obtain an explicit expression for the smartphone's instantaneous total power consumption $P_{total}(t)$:
+\begin{equation}
+    P_{total}(t) = P_{display}(t) + P_{CPU}(t) + P_{conn}(t) + P_{gps}(t) + P_{bg}(t) + P_{AI}(t)
+    \label{eq:total_power_sum}
+\end{equation}
+This equation clearly defines the physical composition of the battery load, establishing the physical basis for $P_{total}(t)$ as the core input term for the subsequent coupled dynamic system (Eq. \ref{eq:soc_dynamics}).
+
+\subsubsection{Scenario Prediction Based on Hidden Markov Model}
+To capture latent user patterns (e.g., busy, leisure), we upgrade the Markov chain to a Hidden Markov Model (HMM) \cite{wang2009tradeoff}. Defining the hidden state $S_t$ and observation $O_t$ (e.g., CPU utilization), the model is described by:
+\begin{equation}
+    P(S_t | S_{t-1}) = \mathbf{A}_{trans}, \quad P(O_t | S_t) = \mathbf{B}_{obs}
+\end{equation}
+Using the Viterbi algorithm to infer hidden states, the state transition matrix $\mathbf{P}$ is defined as:
+\begin{equation}
+    \mathbf{P} = [p_{ij}], \quad p_{ij} = \mathbb{P}(S(t+\Delta t) = S_j | S(t) = S_i)
+    \label{eq:markov_transition}
+\end{equation}
+Based on the current mode $m(t)$, the predicted total power is the superposition of characteristic power and stochastic fluctuations:
+\begin{equation}
+    P_{\text{total}}(t) = P_{m(t)} + \xi(t)
+    \label{eq:mode_power}
+\end{equation}
+where $\xi(t)$ is zero-mean Gaussian white noise, representing instantaneous power fluctuations within the same mode (e.g., burst loads), making the model realistic rather than merely a smooth curve.
+
+\subsection{Equivalent Circuit and Thermodynamic Model}
+
+\subsubsection{Second-Order RC Thevenin Model}
+To balance accuracy and complexity, we employ a second-order RC Thevenin model \cite{hu2012comparative} to describe battery dynamics. The terminal voltage $V_{\text{term}}(t)$ is expressed as:
+\begin{equation}
+    V_{\text{term}}(t) = U_{\text{ocv}}(\text{SOC}(t), T(t)) - I(t)R_0(T) - V_1(t) - V_2(t)
+    \label{eq:terminal_voltage}
+\end{equation}
+where $U_{\text{ocv}}$ is the Open-Circuit Voltage; $R_0$ is the ohmic internal resistance; and $V_1, V_2$ are polarization voltages representing charge transfer and diffusion processes, respectively, which follow the differential equations:
+\begin{equation}
+    \frac{dV_i(t)}{dt} = -\frac{1}{\tau_i(T)}V_i(t) + \frac{I(t)}{C_i(T)}, \quad i = 1, 2
+    \label{eq:rc_dynamics}
+\end{equation}
+where $\tau_i = R_i C_i$ is the time constant, and $R_i, C_i$ are the polarization resistance and capacitance of the $i$-th RC network.
+
+\subsubsection{Arrhenius Temperature Compensation}
+Addressing the temperature dependence of parameters \cite{Zhang2025}, we utilize the Arrhenius equation to dynamically compensate for $R_0$ and $\tau_i$ ($E_a$ is the experimentally calibrated activation energy):
+\begin{equation}
+    R_0(T) = R_0^{ref} \cdot \exp\left[\frac{E_a(R_0)}{R} \left(\frac{1}{T} - \frac{1}{T_{ref}}\right)\right], \quad
+    \tau_i(T) = \tau_i^{ref} \cdot \exp\left[\frac{E_a(\tau_i)}{R} \left(\frac{1}{T} - \frac{1}{T_{ref}}\right)\right] \label{eq:arrhenius_combined}
+\end{equation}
+Furthermore, the OCV adopts a polynomial fit, with coefficients $a_k(T)$ identified via HPPC testing:
+\begin{equation}
+    U_{\text{ocv}}(\text{SOC}, T) = \sum_{k=0}^{n} a_k(T) \cdot \text{SOC}^k
+    \label{eq:ocv_soc}
+\end{equation}
+
+\subsubsection{Thermodynamic Model}
+The temperature evolution of the battery follows the law of conservation of energy and is described by a lumped-parameter thermal model \cite{bernardi1985general}:
+\begin{equation}
+    C_p m \frac{dT(t)}{dt} = P_{\text{heat}}(t) - h A (T(t) - T_{\text{amb}})
+    \label{eq:thermal_dynamics}
+\end{equation}
+where $C_p$ is the specific heat capacity, $m$ is the battery mass, $h$ is the convective heat transfer coefficient, $A$ is the effective heat dissipation surface area, and $T_{\text{amb}}$ is the ambient temperature.
+
+The internal heat generation power $P_{\text{heat}}(t)$ primarily consists of irreversible ohmic heat and reversible reaction heat (entropic heat):
+\begin{equation}
+    P_{\text{heat}}(t) = I(t)^2 R_0(T) + I(t) T \frac{\partial U_{\text{ocv}}}{\partial T}\bigg|_{\text{SOC}}
+    \label{eq:heat_generation}
+\end{equation}
+It should be noted that while polarization heat ($V_1^2/R_1 + V_2^2/R_2$) may be non-negligible in certain high-frequency fast-charging scenarios, in the typical usage scenarios of this model, we primarily focus on the $I^2 R_0$ ohmic heat and the reaction heat terms.
+
+\subsection{System Coupled Dynamic Equations}
+Integrating the power and voltage models, we establish the SOC evolution equation. Based on Coulomb counting and the relationship $P_{\text{total}}(t) = I(t) \cdot V_{\text{term}}(t)$, the non-linear state equation is:
+\begin{equation}
+    \frac{d\text{SOC}(t)}{dt} = - \frac{I(t)}{Q_n} = - \frac{P_{\text{total}}(t)}{Q_n \cdot V_{\text{term}}(\text{SOC}, T, I)}
+    \label{eq:soc_deterministic}
+\end{equation}
+Introducing HMM stochasticity and microscopic fluctuations, we extend this to a stochastic differential equation (SDE) in Itô form \cite{plett2004extended}:
+\begin{equation}
+    d\text{SOC}(t) = \left( - \frac{P_{\text{total}}(t)}{Q_n \cdot V_{\text{term}}(t)} \right) dt + \sigma_{\text{soc}} dW_t
+    \label{eq:soc_dynamics}
+\end{equation}
+where $P_{\text{total}}(t)$ is the stochastic load generated by the HMM; $V_{\text{term}}(t)$ is the real-time terminal voltage containing implicit non-linearities; and $\sigma_{\text{soc}} dW_t$ is the process noise (Wiener Process) characterizing high-frequency fluctuations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{fig/model_coupling_flowchart.png}
+    \caption{Continuous-Time Coupled Battery Modeling Framework. This diagram illustrates the closed-loop feedback mechanism where the stochastic user load (HMM) drives the battery SDE system (Eq. \ref{eq:soc_dynamics}).}
+    \label{fig:model_coupling}
+\end{figure}
+
+\subsection{Internal Battery Dynamics and Aging}
+Lithium-ion battery aging is primarily attributed to lithium loss and increased internal resistance caused by the growth of the SEI film on the anode \cite{schmalstieg2014full}.
+
+\subsubsection{SEI Film Growth Dynamics}
+The growth rate of the SEI film thickness $\frac{d\delta_{\text{SEI}}}{dt}$ is modeled as a function of the side reaction current density $j_{\text{side}}$:
+\begin{equation}
+    \frac{d\delta_{\text{SEI}}(t)}{dt} = \frac{M_{\text{SEI}}}{\rho_{\text{SEI}} F} \cdot |j_{\text{side}}(t)|
+    \label{eq:sei_growth}
+\end{equation}
+where $\delta_{\text{SEI}}$ is the film thickness; and $M_{\text{SEI}}, \rho_{\text{SEI}}$ are the molar mass and density, respectively. $j_{\text{side}}(t)$ follows the Arrhenius-corrected Tafel equation \cite{schmalstieg2014full}:
+\begin{equation}
+    j_{\text{side}}(t) = - A_{\text{side}} \cdot \exp\left( \frac{-E_{a,\text{SEI}}}{RT(t)} \right) \cdot \exp\left( -\frac{\alpha_{\text{c}} F}{RT(t)} (\Phi_s - \Phi_l - U_{\text{ref,SEI}}) \right)
+    \label{eq:sei_current}
+\end{equation}
+This equation reveals that high temperature and low anode potential (high SOC) are key factors inducing rapid SEI growth. (See AI Use Report \ref{ai:sei} for mechanism details.)
+
+\subsubsection{Aging Feedback on Parameters}
+SEI growth leads to performance degradation via two pathways. First, capacity loss, where consumed lithium ions cause a decline in $Q_n(t)$. Second, increased internal resistance, where the thickened film hinders ion transport, leading to a rise in $R_{int}$ \cite{plett2004extended}:
+\begin{equation}
+    Q_n(t) = Q_{n,0} - \int_0^t A_{\text{anode}} \cdot j_{\text{side}}(\tau) \, d\tau
+    \label{eq:capacity_fade}
+\end{equation}
+\begin{equation}
+    R_{int}(t) = R_{0} + \frac{\delta_{\text{SEI}}(t)}{\kappa_{\text{SEI}} \cdot A_{\text{anode}}}
+    \label{eq:resistance_rise}
+\end{equation}
+where $\kappa_{\text{SEI}}$ is the ionic conductivity of the film.
+
+\subsection{Battery Endurance Prediction Model}
+The ultimate goal is to predict the Time-to-Empty (TTE). Integrating the SOC dynamic equation \eqref{eq:soc_dynamics}, TTE is defined as the integration process until the SOC drops to the cutoff threshold $\text{SOC}_{\text{cutoff}}$ (typically 5\% \cite{pop2008battery}):
+\begin{equation}
+    t_{\text{empty}} = \int_{\text{SOC}_0}^{\text{SOC}_{\text{cutoff}}} \frac{-Q_n(t)}{I(t)} \, d\text{SOC} = \int_{\text{SOC}_0}^{\text{SOC}_{\text{cutoff}}} \frac{-Q_n(t) \cdot V_{\text{term}}(t)}{P_{\text{total}}(t)} \, d\text{SOC}
+    \label{eq:tte_power}
+\end{equation}
+where $Q_n(t)$ is the available capacity after aging (Eq. \ref{eq:capacity_fade}); $V_{\text{term}}(t)$ is the real-time terminal voltage (Eq. \ref{eq:terminal_voltage}); and $P_{\text{total}}(t)$ is the stochastic load generated by the HMM (Eq. \ref{eq:mode_power}).
+
+\subsubsection{Stochastic Prediction and Confidence Intervals}
+Given the stochastic nature of the load, $t_{\text{empty}}$ is a random variable. Its probability distribution is obtained by solving the SDE:
+\begin{equation}
+    d\text{SOC}(t) = -\frac{P_{\text{total}}(t)}{Q_n V_{\text{term}}} dt + \sigma_{\text{SOC}} dW_t
+\end{equation}
+Using Monte Carlo simulation, we can calculate the expected value $\mathbb{E}[t_{\text{empty}}]$ and the 90\% confidence interval for TTE, providing probabilistic predictions such as "remaining 3h $\pm$ 20min."
+
+\section{Model Solution}
+To apply the continuous-time model to real-world scenarios, we designed a comprehensive framework incorporating state observation, parameter identification, and numerical solution. We first utilize an observer to handle the unmeasurable SOC, then identify parameters based on experimental data, and finally employ a hybrid numerical algorithm to solve the model and quantify uncertainty.
+
+\subsection{State Estimation Algorithm}
+
+\subsubsection{Extended Kalman Filter (EKF)}
+Since SOC is not directly observable, we employ the EKF \cite{plett2004extended} to estimate the system state. Defining the state vector $\mathbf{x}(t) = [\text{SOC}(t), V_1(t), V_2(t)]^T$, the discretized state-space model is:
+\begin{align}
+    \mathbf{x}_{k+1} & = \mathbf{f}(\mathbf{x}_k, I_k, T_k) + \mathbf{w}_k \label{eq:state_equation} \\
+    y_k              & = h(\mathbf{x}_k, I_k, T_k) + v_k \label{eq:measurement_equation}
+\end{align}
+where $\mathbf{w}_k \sim \mathcal{N}(0, \mathbf{Q})$ and $v_k \sim \mathcal{N}(0, R)$ represent process and measurement noise, respectively, and the measurement output is $y_k = V_{\text{term},k}$. The state transition function $\mathbf{f}$ and measurement function $h$ are defined as:
+\begin{equation}
+    \mathbf{f}(\cdot) = \begin{bmatrix}
+        \text{SOC}_k - \frac{\Delta t}{Q_n} I_k                                         \\
+        e^{-\frac{\Delta t}{\tau_1}} V_{1,k} + (1-e^{-\frac{\Delta t}{\tau_1}}) R_1 I_k \\
+        e^{-\frac{\Delta t}{\tau_2}} V_{2,k} + (1-e^{-\frac{\Delta t}{\tau_2}}) R_2 I_k
+    \end{bmatrix}, \quad
+    h(\cdot) = U_{\text{ocv}} - I_k R_0 - V_{1,k} - V_{2,k}
+    \label{eq:state_transition_measurement}
+\end{equation}
+
+\subsubsection{Adaptive Extended Kalman Filter (AEKF)}
+To address noise variations under dynamic conditions, we adopt an LMAT-driven method \cite{Zhang2025} to dynamically adjust $\mathbf{Q}$ and $R$:
+\begin{align}
+    \mathbf{Q}_k & = (1 - \lambda) \mathbf{Q}_{k-1} + \lambda \cdot \mathrm{diag}(|\hat{\boldsymbol{\epsilon}}_k|/||z_k||) \label{eq:adaptive_Q_improved} \\
+    R_k          & = (1 - \lambda) R_{k-1} + \lambda \cdot |\hat{\epsilon}_{volt,k}|^2 \label{eq:adaptive_R}
+\end{align}
+where the forgetting factor $\lambda \in (0,1)$ (typically 0.01-0.05) allows for rapid filter convergence.
+
+\subsubsection{Physics-Informed Neural Network (PINN) Correction}
+To further enhance accuracy, we introduce a PINN \cite{Wang2024} as a secondary observer. It utilizes a residual-based loss function to explicitly embed physical constraints, such as energy conservation, into the training:
+\begin{equation}
+    \mathcal{L}_{PINN} = \mathcal{L}_{data} + \lambda_p \left\| \frac{d(\text{SOC})}{dt} + \frac{I}{Q_n} \right\|^2
+\end{equation}
+The final estimate is a weighted fusion: $\text{SOC}_{final} = w_1 \text{SOC}_{EKF} + w_2 \text{SOC}_{PINN}$.
+
+\subsection{Parameter Identification and Model Calibration}
+We adopt a two-stage strategy for parameter identification: first determining the OCV curve, then identifying dynamic parameters.
+
+\subsubsection{OCV-SOC Relationship Fitting}
+Using resting voltage data, we performed a 7th-order polynomial fit. As shown in Fig. \ref{fig:ocv_fit}, the model accurately captures the non-linear plateau with $R^2 = 0.9983$ and an RMSE (see AI Use Report \ref{ai:metrics}) of only \textbf{9.82 mV}, ensuring baseline accuracy across the full range.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/paper_results/fig_ocv_soc_curve.png}
+    \caption{7th-order polynomial fit of OCV-SOC. The red line represents the fitted curve, while the blue dots represent measured data, demonstrating extremely high accuracy.}
+    \label{fig:ocv_fit}
+\end{figure}
+
+\subsubsection{Dynamic Parameter Identification}
+Based on the least squares method, $R_0$ and polarization parameters were isolated (see Table \ref{tab:params}). The reference value for $R_0$ is \textbf{29.11 m$\Omega$}, and the high activation energy ($1.5 \times 10^4$ J/mol) indicates its extreme sensitivity to temperature.
+
+\begin{table}[H]
+    \centering
+    \caption{Key Model Parameters Based on Experimental Data}
+    \label{tab:params}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Parameter}                  & \textbf{Symbol} & \textbf{Identified Value} \\
+        \midrule
+        Ref. Ohmic Resistance ($25^\circ$C) & $R_{0,ref}$     & \textbf{29.11} m$\Omega$  \\
+        $R_0$ Activation Energy             & $E_a(R_0)$      & \textbf{15,162} J/mol     \\
+        Nominal Capacity                    & $Q_{n,0}$       & \textbf{3.0} Ah           \\
+        Base Display Power                  & $P_{base}$      & \textbf{4.78} W           \\
+        OCV Fitting Error                   & $RMSE$          & \textbf{9.82} mV          \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Numerical Solution Algorithm}
+To solve the multi-timescale "stiff" SDE system, we designed a hybrid strategy:
+
+\textbf{Hybrid Time-Stepping Strategy}: The algorithm employs a sequential decoupled update mechanism. At each time step ($\Delta t$), the HMM first samples the load mode to determine instantaneous power and estimates load current $I_k$ using prior terminal voltage. For slow variables (SOC, $\delta_{SEI}$), explicit Euler reduces computational cost:
+\begin{equation}
+    SOC_{k+1} = SOC_k - \frac{I_k \Delta t}{Q_n}, \quad \delta_{k+1} = \delta_k + \dot{\delta}(V_k, T_k)\Delta t
+\end{equation}
+For fast variable $V_{RC}$, analytical discretization (Eq. \ref{eq:discrete_V}) prevents numerical divergence from stiffness. Arrhenius temperature correction is applied per step for multi-physics coupling:
+\begin{equation}
+    V_k = V_{k-1} \cdot e^{-\Delta t/\tau} + I_k R \cdot (1 - e^{-\Delta t/\tau})
+    \label{eq:discrete_V}
+\end{equation}
+
+\textbf{Stochastic Prediction Framework}: The outer loop performs 200 Monte Carlo simulations, each generating an independent user behavior sample path and recording TTE upon reaching cutoff voltage. This approximates the probability density evolution of the SDE system, essentially solving the "First Passage Time (FPT)" problem to precisely capture voltage "avalanche" nonlinearity at low charge.
+
+\subsection{Results Analysis and Discussion}
+We evaluated prediction capabilities across multiple scenarios and initial SOCs, and analyzed the driving factors of power consumption.
+
+\subsubsection{Multi-Scenario Time-to-Empty Prediction}
+TTE prediction results based on different modes and initial SOCs are listed in Table \ref{tab:tte_scenarios}. Endurance under high load (Gaming) is only 1/6th of that under light use, confirming that macroscopically, Coulombic efficiency is still dominated by the magnitude of average power.
+
+\begin{table}[H]
+    \centering
+    \caption{TTE Prediction Under Different Modes and Initial Charge Levels (h)}
+    \label{tab:tte_scenarios}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Mode} & \textbf{Avg Power (W)} & \textbf{100\%} & \textbf{50\%} & \textbf{20\%} \\
+        \midrule
+        Idle          & 0.20                   & \textbf{24.00} & 12.00         & 4.80          \\
+        Light         & 0.80                   & \textbf{13.51} & 6.75          & 2.70          \\
+        Video         & 1.50                   & \textbf{7.21}  & 3.60          & 1.44          \\
+        Navigation    & 2.50                   & \textbf{4.32}  & 2.16          & 0.86          \\
+        Gaming        & 4.78                   & \textbf{2.25}  & 1.12          & 0.45          \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{Uncertainty Quantification and Probability Distribution}
+In reality, user behavior switches stochastically. Through 200 Monte Carlo simulations driven by the HMM, we obtained the TTE probability distribution under mixed scenarios (Fig. \ref{fig:tte_dist}): mean \textbf{10.49 h}, with a 90\% confidence interval of \textbf{[9.75, 11.15] h}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/paper_results/fig_tte_distribution.png}
+    \caption{Probability distribution of TTE under mixed scenarios (N=200). The narrow confidence interval ($\approx 1.4$h) indicates that random errors are effectively smoothed at the integration scale, demonstrating model robustness.}
+    \label{fig:tte_dist}
+\end{figure}
+
+\subsubsection{Key Drivers and Counter-Intuitive Findings}
+Through in-depth analysis of the model's response differences across scenarios, we identified core mechanisms leading to rapid battery depletion and some counter-intuitive phenomena:
+
+\begin{enumerate}
+    \item \textbf{Activity Causing Maximum Life Reduction:} The \textbf{high-load "Gaming" mode} is the absolute killer of endurance. In this state, the battery not only faces an average discharge power of up to 5W (directly increasing $d\text{SOC}/dt$) but also suffers from significant \textbf{non-linear Joule heating effects} ($Q_{gen} \propto I^2 R$). Although high temperatures temporarily increase ion activity, they trigger the system's thermal throttling mechanism, forcing a performance downgrade. This paradoxically extends the apparent time from full charge to shutdown, but at the cost of extremely poor user experience.
+
+    \item \textbf{Factor with Unexpectedly Minimal Impact: State of Health (SOH).} Simulations show that even after 500 cycles when capacity ($Q_{n}$) fades to 80\%, the reduction in single-charge endurance (approx. -18\%) is far less than the impact of increasing screen brightness from 50\% to 100\% (approx. -45\%). This finding reveals a key fact: \textbf{the "poor durability" perceived by users is attributed more to the ballooning computational demands of software applications (increasing average power $P_{avg}$) rather than the chemical aging of the battery itself.}
+
+    \item \textbf{Specific Physical Driving Factors:} In the low battery stage (SOC < 20\%), the dominant factor driving rapid depletion shifts from "Coulombic consumption" to "internal resistance polarization." The second-order RC model comes into play as the internal resistance $R_0$ rises exponentially with low SOC. This causes the terminal voltage $V_{term}$ to plummet below the cutoff voltage, triggering automatic shutdown even with minor load fluctuations, leading to the phenomenon where "the last 20\% is extremely fleeting."
+\end{enumerate}
+
+
+% =========================================
+% 8. Sensitivity Analysis (灵敏度分析)
+% =========================================
+\section{Sensitivity Analysis}
+
+To systematically identify the key variables affecting battery life and to uncover parameters that are intuitively important but have minimal actual impact, we conducted a local sensitivity analysis and Morris screening. The analysis results (Fig. \ref{fig:sensitivity}) reveal interesting phenomena:
+
+\begin{enumerate}
+    \item \textbf{Dominant Factors: Battery Capacity ($Q_{n,0}$) and Average Power ($P_{avg}$).} As shown in the figure, $Q_{n,0}$ exhibits the highest sensitivity coefficient (0.87), which aligns with physical intuition. For long-term endurance prediction, the size of the initial energy "bucket" and the rate of drainage (power) play decisive roles.
+
+    \item \textbf{Unexpectedly Minor Factor: Internal Resistance ($R_{0,ref}$).} Although internal resistance is a core indicator of battery aging, its sensitivity coefficient in endurance prediction is only -0.10. This implies that unless the battery has aged to the point where internal resistance doubles, causing severe voltage cutoff, the proportion of total energy consumed by ohmic heat loss under conventional discharge rates (<2C) is not as significant as typically imagined.
+
+    \item \textbf{Ambient Temperature ($T_{amb}$)} shows a significant negative correlation sensitivity. This validates that low temperatures significantly "lock" a portion of available capacity by increasing internal resistance and reducing ion activity, leading to a sudden drop in endurance.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/paper_results/fig_sensitivity_analysis.png}
+    \caption{Sensitivity analysis results of model parameters. The left plot shows that $Q_{n,0}$ (capacity) is the dominant factor; the Morris screening plot on the right further confirms that average power $P_{avg}$ and capacity have the greatest impact on the mean ($\mu^*$).}
+    \label{fig:sensitivity}
+\end{figure}
+
+\subsection{Assumption Robustness Analysis}
+
+To evaluate the necessity of the model's physical assumptions, we compared the prediction deviations between the full model and two simplified assumption models under extreme conditions to examine the impact of "adjusting modeling assumptions" on the results:
+
+\begin{enumerate}
+    \item \textbf{Assumption A (Linear Model):} Ignores internal resistance $R_0$ and polarization voltage, assuming $V_{term} \equiv U_{ocv}$.
+    \item \textbf{Assumption B (Isothermal Model):} Ignores thermal feedback, assuming $T(t) \equiv 25^\circ C$.
+\end{enumerate}
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison of TTE Prediction Deviations Under Different Assumptions (Baseline: Full Coupled Model)}
+    \label{tab:assumption_test}
+    \begin{tabularx}{\textwidth}{lXXX}
+        \toprule
+        \textbf{Scenario (Temp, Mode)} & \textbf{Full Model} & \textbf{Assumption A \newline (Ignore $R_{int}$)} & \textbf{Assumption B \newline (Ignore Thermal)} \\
+        \midrule
+        $25^\circ C$, Light            & 13.51 h             & 13.55 h (+0.3\%)                                  & 13.51 h (0.0\%)                                 \\
+        $25^\circ C$, Gaming           & 2.25 h              & 2.38 h (\textbf{+5.8\%})                          & 2.20 h (-2.2\%)                                 \\
+        $-10^\circ C$, Gaming          & 1.85 h              & 2.38 h (\textbf{+28.6\%})                         & 2.15 h (\textbf{+16.2\%})                       \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Analysis Conclusions:}
+\begin{itemize}
+    \item Under \textbf{Light Usage}, the simple linear model is sufficient, with a deviation of only 0.3\%. In this case, employing the complex second-order RC model appears to be "overkill."
+    \item Under \textbf{High Load (Gaming)}, ignoring internal resistance leads to overly optimistic predictions (+5.8\%) because it fails to account for the $I^2R$ energy loss and the premature triggering of cutoff due to voltage drop under high current.
+    \item Under \textbf{Low Temperature Environments}, simplifying assumptions results in \textbf{catastrophic errors (>28\%)}. This demonstrates the absolute necessity of introducing the Arrhenius temperature compensation mechanism: only the full model can capture the "pseudo-empty" phenomenon caused by the sharp increase in internal resistance at low temperatures.
+\end{itemize}
+
+This indicates that our model possesses "condition adaptability": it degrades to linear characteristics under steady conditions while demonstrating necessary non-linear correction capabilities under extreme conditions.
+
+\section{Practical Recommendations and Model Extension}
+
+Based on the quantitative analysis results of the model, we have formulated optimization strategies for current smartphone users and system developers, and explored the generalization capability of this modeling framework in the time domain (full lifecycle aging) and spatial domain (other portable devices).
+
+\subsection{Optimization Guidelines for End Users}
+Based on model prediction data (Table \ref{tab:tte_scenarios} and Fig. \ref{fig:sensitivity}), we propose the following quantitative recommendations:
+\begin{enumerate}
+    \item \textbf{Avoid the "High Load + Low Battery" Combination:} Simulations show that TTE in Gaming mode is only 2.25 hours, and the voltage drop rate becomes non-linear when SOC < 20\%. It is recommended to manually switch to Light mode when the battery level is below 20\% (extending TTE to 2.7 hours) to prevent high currents from triggering premature shutdown.
+    \item \textbf{Outdoor Thermal Insulation in Winter is Crucial:} Sensitivity analysis indicates a significant positive correlation between ambient temperature and endurance. In a $-10^\circ C$ environment, internal resistance polarization leads to a 28\% reduction in TTE (Table \ref{tab:assumption_test}). Users should avoid prolonged exposure of the device body when outdoors; utilizing body heat for insulation can effectively recover "lost" charge.
+    \item \textbf{Brightness Control Yields Highest Returns:} Since $P_{avg}$ is the dominant factor (sensitivity coefficient 0.87), reducing screen brightness is the most cost-effective action. Switching from high brightness to auto-brightness can reduce average power from 1.5W to 0.8W, directly doubling endurance (Video $\to$ Light).
+\end{enumerate}
+
+\subsection{Model-Driven Scheduling for Operating Systems}
+Traditional BMS lacks deep awareness of physical states. We recommend introducing the following \textbf{model-driven strategies}:
+\begin{itemize}
+    \item \textbf{Low-Temperature Dynamic Cutoff Voltage:} Given the identified activation energy of internal resistance $E_a \approx 15.1 kJ/mol$, the surge in internal resistance at low temperatures causes a false drop in terminal voltage. When the OS detects $T < 0^\circ C$, it should dynamically lower the system shutdown threshold (e.g., from 3.4V to 3.2V) based on the model's real-time estimation of the $IR_0$ voltage drop, thereby releasing physical capacity "locked" by internal resistance.
+    \item \textbf{HMM-Based Probabilistic Preloading:} Using the state transition matrix $\mathbf{A}_{trans}$ of the HMM, the system can calculate the probability of the user entering "Video" mode within the next 5 minutes. If the probability is $>80\%$, buffers are preloaded to avoid instantaneous concurrent high power; if the probability is low, background processes are aggressively suspended to suppress "phantom drain."
+\end{itemize}
+
+\subsection{Assessment of Long-Term Aging Impacts}
+The problem requires considering how battery aging reduces effective capacity. Although users often intuitively feel that "batteries become less durable," our simulation of 500 cycles (approx. 1.5 years of use) reveals the physical truth:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{C:/Users/chenp/Documents/比赛/2026美赛/code/paper_results/fig_aging_impact.png}
+    \caption{Assessment of aging impact after 500 cycles. Left: Comparison of TTE between fresh and aged batteries under different modes; Right: Capacity fade curve shows SOH remains at 99.8\%.}
+    \label{fig:aging_impact}
+\end{figure}
+
+As shown in Fig. \ref{fig:aging_impact}, after 500 cycles of normal use, SOH decreases only from 100\% to 99.8\%, and TTE under high load shortens by merely 0.3\%. This indicates: \textbf{the significant reduction in endurance perceived by users does not primarily originate from the chemical aging of the battery, but from the ballooning computational demands of apps (average power $P_{avg}$ rising year over year).} This provides a physical explanation for the consumer psychology of "it's better to change the phone than the battery."
+
+\section{Model Evaluation and Extension}
+
+\subsection{Analysis of Model Strengths and Weaknesses}
+
+\subsubsection{Strengths}
+\begin{itemize}
+    \item \textbf{Strong Multi-Physics Coupling:} Our model is not merely a simple circuit model; it successfully integrates electrochemical dynamics (Thevenin), thermodynamic feedback (Arrhenius), and material aging mechanisms (SEI Growth). This closed-loop coupling enables the model to capture complex non-linear phenomena such as "rapid power drop at low temperatures" and "heating under high loads."
+    \item \textbf{Quantification Capability of Stochasticity:} Compared to traditional deterministic prediction, the introduction of SDE and HMM allows us to provide not only the mean value of TTE but also a 90\% confidence interval ([9.98, 11.24] hours). This quantification of uncertainty holds significant practical value for users in planning charging times.
+    \item \textbf{High-Precision Voltage Tracking:} Validation results show that the OCV goodness of fit reaches $R^2 > 0.998$, and the terminal voltage RMSE under dynamic conditions is only 0.38\%, demonstrating the model's extremely high accuracy on short time scales.
+\end{itemize}
+
+\subsubsection{Limitations}
+\begin{itemize}
+    \item \textbf{Overestimation of Standby Power Consumption:} The model predicts a "Idle" endurance of 24.0 hours, which deviates from the typical standby performance of modern smartphones (often exceeding 48 hours). The primary reason is that during parameter identification, we set $P_{base}$ as the minimum power consumption when the screen is on (approx. 4.78W), failing to distinguish the immense power difference between "idle with screen on" and "deep sleep with screen off."
+    \item \textbf{Single Aging Mechanism:} The current aging model primarily considers lithium ion loss caused by SEI film growth. In reality, Loss of Active Material (LAM) and current collector corrosion are also significant factors in long-term aging. Ignoring these may lead to overly optimistic predictions for ultra-long-term lifespans exceeding 3 years.
+\end{itemize}
+
+\subsection{Generalization and Extension of the Model}
+This coupled framework possesses strong universality and can be migrated to other systems by adjusting parameters:
+
+\textbf{Electric Vehicle (EV) Range Prediction:} Replacing the load with a motor model (related to the cube of speed) and introducing a "battery pack consistency coefficient" to correct the total internal resistance $R_{pack}$. This model can accurately estimate remaining mileage and utilize thermal sensitivity characteristics to address low-temperature range anxiety.
+
+\textbf{Logistics UAV Mission Planning:} The load must account for aerodynamics ($P \propto (\text{thrust})^{3/2}$). Since UAVs require high C-rate discharge ($>10$C), the polarization voltage terms ($V_1, V_2$) become particularly critical. Using the TTE probability distribution, the probability of "safe return" can be calculated to assist in high-risk decision-making.
+
+
+% =========================================
+% 9. Conclusion (结论)
+% =========================================
+\section{Conclusion}
+
+This paper establishes a continuous-time coupled model integrating stochastic user behavior, electrochemical dynamics, and multi-physics aging mechanisms. Through theoretical modeling and analysis, the following core conclusions are drawn:
+
+\textbf{Model Accuracy:} The second-order RC model successfully captures battery nonlinear characteristics. The OCV goodness of fit is $R^2 = 0.9983$, and the terminal voltage error is $<0.4\%$, laying a solid foundation for high-precision prediction.
+
+\textbf{Multi-Scenario TTE Prediction:} The model quantifies mode differences; endurance in gaming mode (2.25h) is far lower than in standby (24.0h). MCMC simulations determined the 90\% TTE confidence interval, effectively answering probabilistic questions regarding endurance.
+
+\textbf{Quantitative Aging Assessment:} It was found that after 500 cycles, although SOH dropped to 99.8\%, the impact on single-charge endurance was negligible ($<0.5\%$). This demonstrates that the key to improving user experience lies in software power control rather than solely relying on material breakthroughs.
+
+\textbf{Driving Factors and Optimization:} Sensitivity analysis indicates that average load power ($P_{avg}$) is the primary influencing factor. Based on this, the proposed strategies of "active frequency scaling at low temperatures" and "adaptive capacity calibration" provide intelligent solutions for power management.
+
+In summary, this model quantifies the interplay between hardware aging and software load, providing a reliable mathematical basis for the long-term endurance management of intelligent devices.
+
+
+% =========================================
+% References (参考文献)
+% =========================================
+\bibliographystyle{unsrt}
+\bibliography{ref}
+
+% =========================================
+% Appendices (附录)
+% =========================================
+\newpage
+\appendix
+
+% ----------------------------------------------------
+% 关键修改：将目录深度设为0，禁止Section级别出现在目录中
+% ----------------------------------------------------
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
+\section*{Report on Use of AI Tools}
+\begin{sloppypar}
+    \begin{enumerate}
+        \item \label{ai:sei} Google Gemini (Version 3.0 Pro) \\
+              Query: "Explain in detail the mechanism of SEI film growth in lithium-ion batteries and provide governing differential equations, including the Tafel kinetics framework and temperature-dependent parameters." \\
+              Output: The Solid Electrolyte Interphase (SEI) growth is primarily driven by the side reaction current density $j_{side}$ at the anode. Based on Tafel kinetics, the growth rate is governed by:
+              \[ \frac{d\delta_{SEI}}{dt} = K \cdot \exp\left(-\frac{E_a}{RT}\right) \cdot I_{side} \]
+              where $\delta_{SEI}$ is the film thickness, $E_a$ is the activation energy, and $T$ is the temperature. High temperatures and high SOCs accelerate this side reaction exponentially.
+
+        \item \label{ai:network} Google Gemini (Version 3.0 Pro) \\
+              Query: "Find typical power consumption values for 5G, 4G, and WiFi communication modules in modern smartphones, focusing on standby power, active transmission power, and differences between manufacturers." \\
+              Output: Based on recent technical benchmarks (e.g., Ookla 2023, Qualcomm specs):
+              \begin{itemize}
+                  \item \textbf{5G Active:} 1.5--2x higher power drain than 4G LTE.
+                  \item \textbf{5G Standby:} $\approx$ 400--600 mW (vs 4G's $\approx$ 200 mW).
+                  \item \textbf{WiFi Idle:} $\approx$ 30--50 mW.
+              \end{itemize}
+              Note: Snapdragon 8 Gen 2 shows $\approx$ 31\% battery impact on 5G, while older chips like Tensor can reach 40\%.
+
+        \item \label{ai:dataset} Perplexity AI \\
+              Query: "Search for open-source datasets containing smartphone battery discharge curves under variable loads, including dynamic stress tests and real-world usage scenarios." \\
+              Output: Here are top open-source datasets suitable for your model:
+              \begin{itemize}
+                  \item \textbf{CALCE Battery Dataset (UMD):} Features NMC/LCO cells cycled at various temperatures (-10 to 50$^\circ$C).
+                  \item \textbf{NASA Prognostics Repository:} Contains randomized usage profiles (Random Walk) perfect for stochastic modeling.
+                  \item \textbf{MIT Battery Dataset:} Focuses on fast-charging pulse data.
+              \end{itemize}
+
+        \item \label{ai:metrics} Perplexity AI \\
+              Query: "What are the standard metrics for evaluating the accuracy of remaining discharge time predictions in battery research?" \\
+              Output: Key performance indicators (KPIs) in literature include:
+              \begin{itemize}
+                  \item \textbf{RMSE (Root Mean Square Error):} Measures global prediction deviation.
+                  \item \textbf{MAE (Mean Absolute Error):} More robust against outliers.
+                  \item \textbf{PICP (Prediction Interval Coverage Probability):} Critical for SDE/probabilistic models to verify if the true TTE falls within the generated confidence interval (e.g., 90\% CI).
+              \end{itemize}
+    \end{enumerate}
+\end{sloppypar}
+\end{document}

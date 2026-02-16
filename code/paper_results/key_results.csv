@@ -1,0 +1,6 @@
+Metric,Value,Unit
+TTE_Idle,24.0,hours
+TTE_Light,13.511111111111111,hours
+TTE_Gaming,2.2527777777777778,hours
+TTE_MC_Mean,10.488208333333334,hours
+TTE_MC_Std,0.4124977083269675,hours

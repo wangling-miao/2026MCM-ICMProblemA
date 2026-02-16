@@ -1,0 +1,37 @@
+============================================================
+Parameter Identification from Raw Data
+============================================================
+
+============================================================
+RESULTS
+============================================================
+
+[1] OCV-SOC Polynomial Coefficients (7th order):
+    a0 = 3.086977
+    a1 = 8.715510
+    a2 = -69.083472
+    a3 = 291.996081
+    a4 = -672.555663
+    a5 = 860.279577
+    a6 = -572.902078
+    a7 = 154.676608
+    -> RMSE = 9.82 mV
+
+[2] Circuit Resistance Parameters:
+    R0 = 51.06 mOhm
+    tau1 = 0.50 s
+
+[3] Display Power Model Coefficients:
+    P_base = 4.779 W
+    eta_red = 0.100
+    eta_green = 0.100
+    eta_blue = 0.100
+
+[4] Calendar Aging Parameters:
+    alpha_cal = 5.00e-05
+
+Parameters saved to: c:\Users\chenp\Documents\比赛\2026美赛\code\processed_data\identified_parameters.npz
+
+============================================================
+DONE!
+============================================================

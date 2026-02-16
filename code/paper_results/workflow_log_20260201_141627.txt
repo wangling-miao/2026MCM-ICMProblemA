@@ -1,0 +1,167 @@
+======================================================================
+COMPLETE PAPER WORKFLOW EXECUTION
+MCM/ICM 2026 - Battery Lifetime Prediction
+Start Time: 2026-02-01 14:16:27
+Log File: C:\Users\chenp\Documents\比赛\2026美赛\code\paper_results\workflow_log_20260201_141627.txt
+======================================================================
+
+======================================================================
+Starting workflow execution...
+======================================================================
+
+======================================================================
+PHASE 1: Loading All Available Data
+======================================================================
+  ✓ OCV-SOC curve: 1001 points
+  ✓ Battery test files: 5 files
+  ✓ NASA discharge data: 6437 rows
+  ✓ Capacity degradation: 2794 records
+  ✓ HPPC pulse data: 3 temperature points
+  ✓ User behavior data: 50000 events
+  ✓ Component power data: 1000 samples
+  ✓ Calendar aging data: 29 records
+
+  Total datasets loaded: 8
+
+======================================================================
+PHASE 2: Parameter Identification from Experimental Data
+======================================================================
+
+2.1 OCV-SOC Curve Fitting
+    Polynomial degree: 7
+    RMSE: 9.819 mV
+    R²: 0.998270
+    → Saved: fig_ocv_soc_curve.png
+
+2.2 RC Parameters from HPPC Pulse Tests
+    T= +0°C: R0 = 52.05 mΩ
+    T=-10°C: R0 = 63.02 mΩ
+    T=-20°C: R0 = 88.07 mΩ
+    Arrhenius Ea(R0): 15162 J/mol
+    R0 at 25°C: 29.11 mΩ
+
+2.3 Display Power Model Coefficients
+    P_base = 4.779 W
+    η_red = 0.100, η_green = 0.100, η_blue = 0.100
+    Fit RMSE: 0.1372 W
+
+2.4 Calendar Aging Parameters
+    α_cal = 5.00e-05 s^-0.5
+    Ea_cal = 50000 J/mol
+
+  Parameters saved to: C:\Users\chenp\Documents\比赛\2026美赛\code\paper_results\identified_parameters.npz
+
+======================================================================
+PHASE 3: Model Calibration and Validation
+======================================================================
+
+3.1 Validating Against Discharge Data
+    proc_10_21_2014_PLN_1to6_Channel_1-007.c: RMSE=381.8mV, MAE=307.0mV
+    proc_10_21_2014_PLN_1to6_Channel_1-008.c: RMSE=383.8mV, MAE=309.0mV
+    proc_10_21_2014_PLN_1to6_Channel_1-009.c: RMSE=386.5mV, MAE=313.6mV
+
+  Average RMSE: 384.05 mV
+
+======================================================================
+PHASE 4: User Behavior Analysis (HMM)
+======================================================================
+
+4.1 Learning from 50000 user events
+
+4.2 Learned Transition Matrix:
+    From\To     Idle    Ligh    Busy    Gami    Vide    Navi
+    Idle       0.167  0.167  0.167  0.167  0.167  0.167
+    Light      0.008  0.958  0.009  0.008  0.008  0.008
+    Busy       0.008  0.226  0.741  0.008  0.008  0.008
+    Gaming     0.167  0.167  0.167  0.167  0.167  0.167
+    Video      0.167  0.167  0.167  0.167  0.167  0.167
+    Navigation 0.167  0.167  0.167  0.167  0.167  0.167
+
+4.3 Stationary Distribution:
+    Light: 82.4%
+    Busy: 8.6%
+    Idle: 2.3%
+    Video: 2.3%
+    Navigation: 2.3%
+    Gaming: 2.3%
+
+4.4 Expected Power (steady-state): 1.02 W
+
+4.5 Generating Sample Trajectory
+    → Saved: fig_hmm_trajectory.png
+
+======================================================================
+PHASE 5: Time-to-Empty (TTE) Prediction
+======================================================================
+
+5.1 Deterministic TTE by Usage Mode
+    Idle        : 24.00 hours
+    Light       : 13.51 hours
+    Busy        : 5.40 hours
+    Video       : 7.21 hours
+    Gaming      : 2.25 hours
+    Navigation  : 4.32 hours
+    → Saved: fig_tte_by_mode.png
+
+5.2 Monte Carlo TTE Prediction
+    Running 200 Monte Carlo samples...
+    Mean TTE: 10.49 ± 0.41 hours
+    90% CI: [9.75, 11.15] hours
+    → Saved: fig_tte_distribution.png
+
+5.3 SDE-based TTE Analysis
+    SDE Mean TTE: 10.38 hours
+    SDE Std TTE: 0.01 hours
+
+5.4 Aging Impact Analysis: TTE after 500 Cycles
+    Initial Capacity: 3.00 Ah
+    Calendar Aging Loss: 0.00%
+    Cycle Aging Loss: 0.22%
+    Total Capacity Loss: 0.22%
+    Aged Capacity: 2.99 Ah (SOH = 99.8%)
+
+    Recalculating TTE with aged battery...
+
+    TTE Degradation after 500 Cycles:
+    Mode         Fresh      Aged       Loss      
+    ------------ ---------- ---------- ----------
+    Idle            24.00h    24.00h      0.0%
+    Light           13.51h    13.52h     -0.0%
+    Gaming           2.25h     2.25h      0.3%
+    MC Average      10.49h    10.47h      0.2%
+
+    ✓ Aging analysis shows 0.2% capacity loss
+      leads to 0.2% reduction in average battery life
+
+======================================================================
+PHASE 6: Sensitivity Analysis
+======================================================================
+
+6.1 Local Sensitivity Analysis
+    ∂TTE/∂Q_n0: 0.8731
+    ∂TTE/∂R0_ref: -0.1028
+    ∂TTE/∂T_amb: -0.2567
+    ∂TTE/∂P_avg: 0.0000
+
+6.2 Morris Screening (Global Sensitivity)
+
+6.3 Parameter Importance Ranking:
+    1. Q_n0: μ* = 23081.2500
+    2. P_avg: μ* = 16548.7500
+    3. T_amb: μ* = 82.5000
+    4. R0_ref: μ* = 75.0000
+
+    → Saved: fig_sensitivity_analysis.png
+
+======================================================================
+PHASE 7: Generating Final Report
+======================================================================
+  Report saved: C:\Users\chenp\Documents\比赛\2026美赛\code\paper_results\PAPER_RESULTS_REPORT.md
+  Key results saved: key_results.csv
+
+======================================================================
+WORKFLOW COMPLETE!
+End Time: 2026-02-01 14:19:46
+Results saved to: C:\Users\chenp\Documents\比赛\2026美赛\code\paper_results
+Log saved to: C:\Users\chenp\Documents\比赛\2026美赛\code\paper_results\workflow_log_20260201_141627.txt
+======================================================================

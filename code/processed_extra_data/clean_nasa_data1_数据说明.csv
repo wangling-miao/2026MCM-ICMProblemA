@@ -1,0 +1,19 @@
+NASA锂离子电池老化数据集,Unnamed: 1
+,
+数据来源,NASA Ames Prognostics Center of Excellence (PCoE)
+数据描述,锂离子18650电池在不同温度和负载条件下的充放电循环数据
+适用问题,问题1（SOC建模）、问题2（剩余时间预测）、问题3（敏感性分析）
+,
+数据字段说明:,
+Voltage_measured,电池端电压 (V)
+Current_measured,电池输出电流 (A)
+Temperature_measured,电池温度 (°C)
+Current_load,负载电流 (A)
+Voltage_load,负载电压 (V)
+Time,时间向量 (秒)
+Capacity,电池容量 (Ah) - 放电至2.7V时的容量
+,
+建模用途:,
+1. 电压-时间曲线可用于建立SOC与电压的关系模型,
+2. 容量衰减数据可用于电池老化建模,
+3. 温度数据可用于分析温度对放电特性的影响,
